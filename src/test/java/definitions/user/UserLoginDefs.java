@@ -1,5 +1,6 @@
-package definitions;
+package definitions.user;
 
+import definitions.SetupTestDefs;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -13,7 +14,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.logging.Logger;
 
-public class UserLoginDefs extends SetupTestDefs{
+public class UserLoginDefs extends SetupTestDefs {
     private static Response response;
     private static final Logger log = Logger.getLogger(UserLoginDefs.class.getName());
     @Given("I am already registered")

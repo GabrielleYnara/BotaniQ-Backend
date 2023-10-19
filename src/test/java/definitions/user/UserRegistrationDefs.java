@@ -1,6 +1,6 @@
-package definitions;
+package definitions.user;
 
-import io.cucumber.java.en.Given;
+import definitions.SetupTestDefs;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
@@ -10,12 +10,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.springframework.http.*;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.logging.Logger;
 
 
-public class UserRegistrationDefs extends SetupTestDefs{
+public class UserRegistrationDefs extends SetupTestDefs {
     private static Response response;
     private static final Logger log = Logger.getLogger(UserRegistrationDefs.class.getName());
 
