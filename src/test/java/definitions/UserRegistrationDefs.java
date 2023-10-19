@@ -51,7 +51,7 @@ public class UserRegistrationDefs extends SetupTestDefs{
 
     @Then("I should see an error message")
     public void iShouldSeeAnErrorMessage() {
-        log.info("Failed Registration - Email already taken.");
+        log.info("THEN - I should see an error message.");
         Assert.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
     }
 }

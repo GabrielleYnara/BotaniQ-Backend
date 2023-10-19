@@ -6,4 +6,4 @@ Feature: User Login
 
   Scenario: Login with invalid credentials
     When I provide an incorrect email or password
-    Then I should see an error message
+    Then I should see a failed login message
