@@ -36,4 +36,22 @@ public class UserRegistrationDefs extends SetupTestDefs{
         log.info("Successful Registration");
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
+
+    @When("I enter an email already taken")
+    public void iEnterAnEmailAlreadyTaken() throws JSONException {
+        log.info("User Registration - I enter an email already taken.");
+        RestAssured.baseURI = BASE_URL;
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("email", "newuser@email.com");
+        requestBody.put("password", "password");
+        request.header("Content-Type", "application/json");
+        response = request.body(requestBody.toString()).post(BASE_URL + port + "/auth/users/register/");
+    }
+
+    @Then("I should see an error message")
+    public void iShouldSeeAnErrorMessage() {
+        log.info("Failed Registration - Email already taken.");
+        Assert.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+    }
 }
