@@ -30,9 +30,26 @@ public class GardenStepDefs extends  SetupTestDefs{
         this.description = description;
     }
 
+    @And("I provide additional notes {string}")
+    public void iProvideAdditionalNotes(String notes) {
+        log.info("I provide additional notes");
+        this.notes = notes;
+    }
+
     @When("I attempt to create a garden just with a description")
     public void iAttemptToCreateAGardenJustWithADescription() throws JSONException {
-        log.info("I attempt to create the garden");
+        log.info("I attempt to create a garden just with a description.");
+        RestAssured.baseURI = BASE_URL;
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("description", description);
+        request.headers(createAuthenticatedHeader(token));
+        response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/");
+    }
+
+    @When("I attempt to create a garden with a description and notes")
+    public void iAttemptToCreateAGardenWithADescriptionAndNotes() throws JSONException {
+        log.info("I attempt to create a garden with a description and notes.");
         RestAssured.baseURI = BASE_URL;
         RequestSpecification request = RestAssured.given();
         JSONObject requestBody = new JSONObject();
@@ -46,4 +63,6 @@ public class GardenStepDefs extends  SetupTestDefs{
     public void theGardenShouldBeSavedSuccessfully() {
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
+
+
 }
