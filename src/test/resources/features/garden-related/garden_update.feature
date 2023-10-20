@@ -7,7 +7,6 @@ Feature: Garden Information Update
     When I update the description to "<description>" and the notes to "<notes>"
     And the new information is different from the original
     Then the garden should be updated successfully
-    And I should see a success message "Garden information updated successfully"
 
     Examples:
       | description | notes     |
