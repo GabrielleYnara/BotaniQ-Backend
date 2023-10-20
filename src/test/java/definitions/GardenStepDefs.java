@@ -158,7 +158,7 @@ public class GardenStepDefs extends  SetupTestDefs{
         request.headers(createAuthenticatedHeader(token));
         response = request.get(BASE_URL + port + "/gardens/1/");
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
+    }//ToDo: assign the response to a garden obj and use it in the @when statement
 
     @When("I request to view the plants in the garden")
     public void iRequestToViewThePlantsInTheGarden() {
@@ -173,5 +173,14 @@ public class GardenStepDefs extends  SetupTestDefs{
         List<Map<String, String>> plants = JsonPath.from(String.valueOf(response.getBody())).get("data");
         Assert.assertFalse(plants.isEmpty());
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Given("I provide an invalid garden")
+    public void iProvideAnInvalidGarden() {
+        log.info("I provide an invalid garden");
+        RestAssured.baseURI = BASE_URL;
+        RequestSpecification request = RestAssured.given();
+        request.headers(createAuthenticatedHeader(token));
+        response = request.get(BASE_URL + port + "/gardens/invalid-garden/");
     }
 }
