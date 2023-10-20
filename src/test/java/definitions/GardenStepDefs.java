@@ -1,8 +1,5 @@
 package definitions;
 
-import definitions.user.UserLoginDefs;
-import definitions.user.UserProfileDefs;
-import definitions.user.UserRegistrationDefs;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
