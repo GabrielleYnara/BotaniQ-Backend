@@ -4,14 +4,12 @@ Feature: Garden Creation
     Given I am logged in
 
   Scenario: Successful garden creation with just a description
-    Given I am logged in
-    And I provide a unique description "Deck Vertical Garden"
+    Given I provide a unique description "Deck Vertical Garden"
     When I attempt to create a garden just with a description
     Then the garden should be saved successfully
 
   Scenario: Successful garden creation with a description and additional notes
-    Given I am logged in
-    And I provide a unique description "Deck Vertical Garden"
+    Given I provide a unique description "Deck Vertical Garden"
     And I provide additional notes "This is a replica of my real garden"
     When I attempt to create a garden with a description and notes
     Then the garden should be saved successfully
