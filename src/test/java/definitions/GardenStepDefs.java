@@ -146,4 +146,14 @@ public class GardenStepDefs extends  SetupTestDefs{
         request.headers(createAuthenticatedHeader(token));
         response = request.body(requestBody.toString()).put(BASE_URL + port + "/gardens/1/");
     }
+
+    @And("I have a valid garden")
+    public void iHaveAValidGarden() {
+        log.info("I have a valid garden");
+        RestAssured.baseURI = BASE_URL;
+        RequestSpecification request = RestAssured.given();
+        request.headers(createAuthenticatedHeader(token));
+        response = request.get(BASE_URL + port + "/gardens/1/");
+        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
 }
