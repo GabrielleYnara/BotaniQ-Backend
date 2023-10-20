@@ -31,6 +31,7 @@ public class UserProfileDefs extends SetupTestDefs {
         request.header("Content-Type", "application/json");
         response = request.body(requestBody.toString()).post(BASE_URL + port + "/auth/users/login/");
         token = response.jsonPath().getString("jwt");
+        log.info("TOKEN " + token);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -66,7 +67,7 @@ public class UserProfileDefs extends SetupTestDefs {
         RequestSpecification request = RestAssured.given();
         request.headers(createAuthenticatedHeader(token));
         // Sending request to an invalid endpoint to simulate server error
-        response = request.body(new JSONObject().toString()).put(BASE_URL + port + "/auth/users/invalid-endpoint/");
+        response = request.body(new JSONObject().toString()).put(BASE_URL + port + "/invalid-endpoint/");
     }
 
     @Then("I should see the profile update failed")

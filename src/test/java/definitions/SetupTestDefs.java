@@ -13,11 +13,11 @@ public class SetupTestDefs {
 
     @LocalServerPort
     protected String port;
-    protected static String token;
+    protected String token;
     protected HttpHeaders createAuthenticatedHeader(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
-        headers.add("Authorization", "Bearer " + token);
+        headers.add("Authorization", "Bearer " + this.token);
         return headers;
     }
 }
