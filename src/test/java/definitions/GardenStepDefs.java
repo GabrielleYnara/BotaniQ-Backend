@@ -12,8 +12,12 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.springframework.http.HttpStatus;
 
+import java.awt.event.WindowFocusListener;
 import java.util.logging.Logger;
 
+/**
+ * @see <a href="https://webkul.com/blog/parametrization-in-cucumber/">Parametrization in Cucumber</a>
+ */
 public class GardenStepDefs extends  SetupTestDefs{
     private static Response response;
     private static final Logger log = Logger.getLogger(GardenStepDefs.class.getName());
@@ -91,5 +95,12 @@ public class GardenStepDefs extends  SetupTestDefs{
     @Then("I should see an error message {string}")
     public void iShouldSeeAnErrorMessage(String message) {
         Assert.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+    }
+
+    @And("I have a garden with description {string} and notes {string}")
+    public void iHaveAGardenWithDescriptionAndNotes(String description, String notes) {
+        log.info("I have a garden with description " + description  + " and notes " + notes);
+        this.description = description;
+        this.notes = notes;
     }
 }
