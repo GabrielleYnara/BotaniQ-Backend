@@ -23,10 +23,9 @@ public class GardenStepDefs extends  SetupTestDefs{
 
     private String description;
     private String notes;
-    @Given("I provide a unique description {string}")
-    public void iProvideAUniqueDescription(String description) {
-        log.info("SCENARIO: Successful garden creation with a unique description.");
-        log.info("I provide a unique description.");
+    @Given("I provide a description {string}")
+    public void iProvideADescription(String description) {
+        log.info("I provide a description.");
         this.description = description;
     }
 
@@ -61,8 +60,39 @@ public class GardenStepDefs extends  SetupTestDefs{
 
     @Then("the garden should be saved successfully")
     public void theGardenShouldBeSavedSuccessfully() {
+        log.info("the garden should be saved successfully");
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
+    @And("no other garden has the description {string}")
+    public void noOtherGardenHasTheDescription(String description) {
+        Assert.assertEquals(false, aGardenWithDescriptionAlreadyExists(description));
 
+    }
+
+    @Given("a garden with description {string} already exists")
+    public boolean aGardenWithDescriptionAlreadyExists(String description) {
+        log.info("a garden with given description already exists");
+        RestAssured.baseURI = BASE_URL;
+        RequestSpecification request = RestAssured.given();
+        request.headers(createAuthenticatedHeader(token));
+        response = request.queryParam("description", description).get(BASE_URL + port + "/gardens");
+        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        if (response.getStatusCode() == 200){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @When("I attempt to create a duplicated garden")
+    public void iAttemptToCreateADuplicatedGarden() throws JSONException {
+        log.info("I attempt to create a duplicated garden.");
+        this.iAttemptToCreateAGardenJustWithADescription();
+    }
+
+    @Then("I should see an error message {string}")
+    public void iShouldSeeAnErrorMessage(String message) {
+        Assert.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+    }
 }
