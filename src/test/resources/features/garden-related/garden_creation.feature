@@ -1,7 +1,7 @@
 Feature: Garden Creation
 
-#  Background:
-#    Given I am logged in
+  Background:
+    Given I am logged in
 
   Scenario: Successful garden creation with just a description
     Given I provide a description "Deck Vertical Garden"
