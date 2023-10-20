@@ -5,6 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.json.JSONException;
@@ -12,6 +13,8 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -154,6 +157,21 @@ public class GardenStepDefs extends  SetupTestDefs{
         RequestSpecification request = RestAssured.given();
         request.headers(createAuthenticatedHeader(token));
         response = request.get(BASE_URL + port + "/gardens/1/");
+        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @When("I request to view the plants in the garden")
+    public void iRequestToViewThePlantsInTheGarden() {
+        RestAssured.baseURI = BASE_URL;
+        RequestSpecification request = RestAssured.given();
+        request.headers(createAuthenticatedHeader(token));
+        response = request.get(BASE_URL + port + "/gardens/1/plants/");
+    }
+
+    @Then("I should see a list of plants associated with the garden")
+    public void iShouldSeeAListOfPlantsAssociatedWithTheGarden() {
+        List<Map<String, String>> plants = JsonPath.from(String.valueOf(response.getBody())).get("data");
+        Assert.assertFalse(plants.isEmpty());
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }
