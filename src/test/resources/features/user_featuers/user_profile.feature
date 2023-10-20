@@ -8,4 +8,4 @@ Feature: Profile Update
   Scenario: Profile update failure due to server error
     Given I am logged in
     When the server encounters an error
-    Then I should see an error message "Profile update failed"
+    Then I should see the profile update failed

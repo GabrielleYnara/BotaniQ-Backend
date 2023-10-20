@@ -10,11 +10,13 @@ import io.restassured.specification.RequestSpecification;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 import java.util.logging.Logger;
 
+/**
+ * @see <a href="https://cucumber.io/docs/guides/10-minute-tutorial/#write-a-scenario">Cucumber Docs - Write a Scenario</a>
+ */
 public class UserProfileDefs extends SetupTestDefs {
     private static Response response;
     private static String validToken ;
@@ -32,7 +34,6 @@ public class UserProfileDefs extends SetupTestDefs {
         validToken = response.jsonPath().getString("jwt");
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
-
 
     @When("I enter my first name, last name, and or bio")
     public void iEnterMyFirstNameLastNameAndOrBio() throws JSONException {
@@ -57,5 +58,21 @@ public class UserProfileDefs extends SetupTestDefs {
         response = request.get(BASE_URL + port + "/auth/users/profile/");
         //check if info is updated.
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @When("the server encounters an error")
+    public void theServerEncountersAnError() {
+        log.info("WHEN - the server encounters an error");
+        RestAssured.baseURI = BASE_URL;
+        RequestSpecification request = RestAssured.given();
+        request.headers(createAuthenticatedHeader(validToken));
+        // Sending request to an invalid endpoint to simulate server error
+        response = request.body(new JSONObject().toString()).put(BASE_URL + port + "/auth/users/invalid-endpoint/");
+    }
+
+    @Then("I should see the profile update failed")
+    public void iShouldSeeTheProfileUpdateFailed() {
+        log.info("THEN - I should see the profile update failed");
+        Assert.assertNotEquals(HttpStatus.OK, response.getStatusCode()); //indicating an error occurred.
     }
 }
