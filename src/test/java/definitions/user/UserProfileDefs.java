@@ -19,7 +19,6 @@ import java.util.logging.Logger;
  */
 public class UserProfileDefs extends SetupTestDefs {
     private static Response response;
-    private static String validToken ;
     private static final Logger log = Logger.getLogger(UserLoginDefs.class.getName());
     @Given("I am logged in")
     public void iAmLoggedIn() throws JSONException {
@@ -31,7 +30,7 @@ public class UserProfileDefs extends SetupTestDefs {
         requestBody.put("password", "password");
         request.header("Content-Type", "application/json");
         response = request.body(requestBody.toString()).post(BASE_URL + port + "/auth/users/login/");
-        validToken = response.jsonPath().getString("jwt");
+        token = response.jsonPath().getString("jwt");
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -44,7 +43,7 @@ public class UserProfileDefs extends SetupTestDefs {
         requestBody.put("first name", "John");
         requestBody.put("last name", "Doe");
         requestBody.put("bio", "Love gardening and caring for my fresh herbs");
-        request.headers(createAuthenticatedHeader(validToken));
+        request.headers(createAuthenticatedHeader(token));
         response = request.body(requestBody.toString()).put(BASE_URL + port + "/auth/users/profile/");
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -54,7 +53,7 @@ public class UserProfileDefs extends SetupTestDefs {
         log.info("The personal information is updated and display success message");
         RestAssured.baseURI = BASE_URL;
         RequestSpecification request = RestAssured.given();
-        request.headers(createAuthenticatedHeader(validToken));
+        request.headers(createAuthenticatedHeader(token));
         response = request.get(BASE_URL + port + "/auth/users/profile/");
         //check if info is updated.
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -65,7 +64,7 @@ public class UserProfileDefs extends SetupTestDefs {
         log.info("WHEN - the server encounters an error");
         RestAssured.baseURI = BASE_URL;
         RequestSpecification request = RestAssured.given();
-        request.headers(createAuthenticatedHeader(validToken));
+        request.headers(createAuthenticatedHeader(token));
         // Sending request to an invalid endpoint to simulate server error
         response = request.body(new JSONObject().toString()).put(BASE_URL + port + "/auth/users/invalid-endpoint/");
     }
