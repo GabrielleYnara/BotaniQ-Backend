@@ -12,7 +12,6 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.springframework.http.HttpStatus;
 
-import java.awt.event.WindowFocusListener;
 import java.util.logging.Logger;
 
 /**
