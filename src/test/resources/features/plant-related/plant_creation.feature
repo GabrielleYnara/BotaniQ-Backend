@@ -7,3 +7,8 @@ Feature: Create and Add Plant to a Garden
     Given I have a valid garden
     When I create a plant name "Basil" and type "Herb"
     Then the plant should be created successfully and added to the garden
+
+  Scenario: Error when garden is invalid
+    Given I provide an invalid garden
+    When I create a plant name "Basil" and type "Herb"
+    Then I should see an error message "Invalid garden"
