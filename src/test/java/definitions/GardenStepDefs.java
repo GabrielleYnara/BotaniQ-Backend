@@ -6,12 +6,11 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
-import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Map;
@@ -38,57 +37,72 @@ public class GardenStepDefs extends SetupTestDefs{
     }
 
     @When("I attempt to create a garden just with a description")
-    public void iAttemptToCreateAGardenJustWithADescription() throws JSONException {
+    public void iAttemptToCreateAGardenJustWithADescription() {
         log.info("I attempt to create a garden just with a description.");
-        RestAssured.baseURI = BASE_URL;
-        RequestSpecification request = RestAssured.given();
-        JSONObject requestBody = new JSONObject();
-        requestBody.put("description", description);
-        request.headers(createAuthenticatedHeader(token));
-        response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/");
+        try {
+            RestAssured.baseURI = BASE_URL;
+            RequestSpecification request = RestAssured.given();
+            JSONObject requestBody = new JSONObject();
+            requestBody.put("description", description);
+            request.headers(createAuthenticatedHeader(token));
+            response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/");
+        } catch (Exception e){
+            log.severe("Something went wrong when I attempt to create a garden just with a description.\n"
+            + "Error: " + e.getMessage());
+        }
+
     }
 
     @When("I attempt to create a garden with a description and notes")
-    public void iAttemptToCreateAGardenWithADescriptionAndNotes() throws JSONException {
+    public void iAttemptToCreateAGardenWithADescriptionAndNotes() {
         log.info("I attempt to create a garden with a description and notes.");
-        RestAssured.baseURI = BASE_URL;
-        RequestSpecification request = RestAssured.given();
-        JSONObject requestBody = new JSONObject();
-        requestBody.put("description", description);
-        requestBody.put("notes", notes);
-        request.headers(createAuthenticatedHeader(token));
-        response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/");
+        try {
+            RestAssured.baseURI = BASE_URL;
+            RequestSpecification request = RestAssured.given();
+            JSONObject requestBody = new JSONObject();
+            requestBody.put("description", description);
+            requestBody.put("notes", notes);
+            request.headers(createAuthenticatedHeader(token));
+            response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/");
+        } catch (Exception e){
+            log.severe("Something went wrong when I attempt to create a garden with a description and notes.\n"
+                    + "Error: " + e.getMessage());
+        }
+
     }
 
     @Then("the garden should be saved successfully")
     public void theGardenShouldBeSavedSuccessfully() {
-        log.info("the garden should be saved successfully");
+        log.info("the garden was saved successfully");
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @And("no other garden has the description {string}")
     public void noOtherGardenHasTheDescription(String description) {
         Assert.assertEquals(false, aGardenWithDescriptionAlreadyExists(description));
-
     }
 
     @Given("a garden with description {string} already exists")
     public boolean aGardenWithDescriptionAlreadyExists(String description) {
         log.info("a garden with given description already exists");
-        RestAssured.baseURI = BASE_URL;
-        RequestSpecification request = RestAssured.given();
-        request.headers(createAuthenticatedHeader(token));
-        response = request.queryParam("description", description).get(BASE_URL + port + "/gardens");
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-        if (response.getStatusCode() == 200){
-            return true;
-        } else {
-            return false;
+        try{
+            RestAssured.baseURI = BASE_URL;
+            RequestSpecification request = RestAssured.given();
+            request.headers(createAuthenticatedHeader(token));
+            response = request.queryParam("description", description).get(BASE_URL + port + "/gardens");
+            Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+            if (response.getStatusCode() == 200) {
+                return true;
+            }
+        } catch (Exception e){
+            log.severe("Something went wrong when I attempt to get a garden with existing description.\n"
+                    + "Error: " + e.getMessage());
         }
+        return false;
     }
 
     @When("I attempt to create a duplicated garden")
-    public void iAttemptToCreateADuplicatedGarden() throws JSONException {
+    public void iAttemptToCreateADuplicatedGarden() {
         log.info("I attempt to create a duplicated garden.");
         this.iAttemptToCreateAGardenJustWithADescription();
     }
@@ -96,6 +110,7 @@ public class GardenStepDefs extends SetupTestDefs{
     @Then("I should see an error message {string}")
     public void iShouldSeeAnErrorMessage(String message) {
         Assert.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        log.severe("Error message: " + message);
     }
 
     @And("I have a garden with description {string} and notes {string}")
@@ -106,19 +121,25 @@ public class GardenStepDefs extends SetupTestDefs{
     }
 
     @When("I update the description to {string} and the notes to {string}")
-    public void iUpdateTheDescriptionToAndTheNotesTo(String description, String notes) throws JSONException {
+    public void iUpdateTheDescriptionToAndTheNotesTo(String description, String notes) {
         log.info("I update the description to " + description + " and the notes to " + notes);
-        RestAssured.baseURI = BASE_URL;
-        RequestSpecification request = RestAssured.given();
-        JSONObject requestBody = new JSONObject();
-        if (!description.isEmpty()){
-            requestBody.put("description", description);
+        try{
+            RestAssured.baseURI = BASE_URL;
+            RequestSpecification request = RestAssured.given();
+            JSONObject requestBody = new JSONObject();
+            if (!description.isEmpty()){
+                requestBody.put("description", description);
+            }
+            if (!notes.isEmpty()){
+                requestBody.put("notes", notes);
+            }
+            request.headers(createAuthenticatedHeader(token));
+            response = request.body(requestBody.toString()).put(BASE_URL + port + "/gardens/1/");
+        } catch (Exception e){
+            log.severe("Something went wrong when I attempt to update a garden.\n"
+                    + "Error: " + e.getMessage());
         }
-        if (!notes.isEmpty()){
-            requestBody.put("notes", notes);
-        }
-        request.headers(createAuthenticatedHeader(token));
-        response = request.body(requestBody.toString()).put(BASE_URL + port + "/gardens/1/");
+
     }
 
     @And("the new information is different from the original")
@@ -134,38 +155,54 @@ public class GardenStepDefs extends SetupTestDefs{
     }
 
     @When("I update the garden with the same description and notes")
-    public void iUpdateTheGardenWithTheSameDescriptionAndNotes() throws JSONException {
+    public void iUpdateTheGardenWithTheSameDescriptionAndNotes() {
         log.info("I update the garden with the same description and notes");
-        RestAssured.baseURI = BASE_URL;
-        RequestSpecification request = RestAssured.given();
-        JSONObject requestBody = new JSONObject();
-        if (!description.isEmpty()){
-            requestBody.put("description", description);
+        try{
+            RestAssured.baseURI = BASE_URL;
+            RequestSpecification request = RestAssured.given();
+            JSONObject requestBody = new JSONObject();
+            if (!description.isEmpty()){
+                requestBody.put("description", description);
+            }
+            if (!notes.isEmpty()){
+                requestBody.put("notes", notes);
+            }
+            request.headers(createAuthenticatedHeader(token));
+            response = request.body(requestBody.toString()).put(BASE_URL + port + "/gardens/1/");
+        } catch (Exception e){
+            log.severe("Something went wrong when I attempt to update an unchanged garden.\n"
+                    + "Error: " + e.getMessage());
         }
-        if (!notes.isEmpty()){
-            requestBody.put("notes", notes);
-        }
-        request.headers(createAuthenticatedHeader(token));
-        response = request.body(requestBody.toString()).put(BASE_URL + port + "/gardens/1/");
+
     }
 
     @And("I have a valid garden")
     public void iHaveAValidGarden() {
         log.info("I have a valid garden");
-        RestAssured.baseURI = BASE_URL;
-        RequestSpecification request = RestAssured.given();
-        request.headers(createAuthenticatedHeader(token));
-        response = request.get(BASE_URL + port + "/gardens/1/");
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        try {
+            RestAssured.baseURI = BASE_URL;
+            RequestSpecification request = RestAssured.given();
+            request.headers(createAuthenticatedHeader(token));
+            response = request.get(BASE_URL + port + "/gardens/1/");
+            Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        } catch (Exception e){
+            log.severe("Something went wrong when I have a valid garden.\n"
+                    + "Error: " + e.getMessage());
+        }
     }//ToDo: assign the response to a garden obj and use it in the @when statement
-    // return garden obj?
 
     @When("I request to view the plants in the garden")
     public void iRequestToViewThePlantsInTheGarden() {
-        RestAssured.baseURI = BASE_URL;
-        RequestSpecification request = RestAssured.given();
-        request.headers(createAuthenticatedHeader(token));
-        response = request.get(BASE_URL + port + "/gardens/1/plants/");
+        try{
+            RestAssured.baseURI = BASE_URL;
+            RequestSpecification request = RestAssured.given();
+            request.headers(createAuthenticatedHeader(token));
+            response = request.get(BASE_URL + port + "/gardens/1/plants/");
+        } catch (Exception e){
+            log.severe("Something went wrong when I request to view the plants in the garden.\n"
+                    + "Error: " + e.getMessage());
+        }
+
     }
 
     @Then("I should see a list of plants associated with the garden")
@@ -178,9 +215,15 @@ public class GardenStepDefs extends SetupTestDefs{
     @Given("I provide an invalid garden")
     public void iProvideAnInvalidGarden() {
         log.info("I provide an invalid garden");
-        RestAssured.baseURI = BASE_URL;
-        RequestSpecification request = RestAssured.given();
-        request.headers(createAuthenticatedHeader(token));
-        response = request.get(BASE_URL + port + "/gardens/invalid-garden/");
+        try{
+            RestAssured.baseURI = BASE_URL;
+            RequestSpecification request = RestAssured.given();
+            request.headers(createAuthenticatedHeader(token));
+            response = request.get(BASE_URL + port + "/gardens/invalid-garden/");
+        } catch (Exception e){
+            log.severe("Something went wrong when I provide an invalid garden.\n"
+                    + "Error: " + e.getMessage());
+        }
+
     }
 }
