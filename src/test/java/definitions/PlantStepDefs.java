@@ -4,6 +4,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.specification.RequestSpecification;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.springframework.http.HttpStatus;
@@ -33,5 +34,24 @@ public class PlantStepDefs extends SetupTestDefs{
     public void thePlantShouldBeCreatedSuccessfullyAndAddedToTheGarden() {
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
         log.info("the plant should be created successfully and added to the garden");
+    }
+
+    @When("I create a plant with {string} or {string} missing")
+    public void iCreateAPlantWithOrMissing(String name, String type) {
+        log.info("I create a plant with name or type missing");
+        try {
+            RestAssured.baseURI = BASE_URL;
+            RequestSpecification request = RestAssured.given();
+            JSONObject requestBody = new JSONObject();
+            if (!name.isEmpty()) {
+                requestBody.put("name", name);
+            }
+            if (!type.isEmpty()) {
+                requestBody.put("type", type);
+            }
+            response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/1/plants");
+        } catch (Exception e) {
+            log.severe("Something went wrong during plant creation with missing info. \nError: " + e.getMessage());
+        }
     }
 }
