@@ -20,8 +20,7 @@ import java.util.logging.Logger;
 /**
  * @see <a href="https://webkul.com/blog/parametrization-in-cucumber/">Parametrization in Cucumber</a>
  */
-public class GardenStepDefs extends  SetupTestDefs{
-    private static Response response;
+public class GardenStepDefs extends SetupTestDefs{
     private static final Logger log = Logger.getLogger(GardenStepDefs.class.getName());
 
     private String description;
@@ -159,6 +158,7 @@ public class GardenStepDefs extends  SetupTestDefs{
         response = request.get(BASE_URL + port + "/gardens/1/");
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }//ToDo: assign the response to a garden obj and use it in the @when statement
+    // return garden obj?
 
     @When("I request to view the plants in the garden")
     public void iRequestToViewThePlantsInTheGarden() {
