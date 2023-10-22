@@ -1,8 +1,18 @@
 package com.example.bontaniq.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+
+@Entity
+@Table(name="users")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // generate a sequence of unused Long integer values
     private Long id;
+    @Column(unique = true)
     private String emailAddress;
+    @Column
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) //restricts the access
     private String password;
 
     public User() {
