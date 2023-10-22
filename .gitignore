@@ -41,3 +41,6 @@ build/
 # OS-specific
 .DS_Store
 Thumbs.db
+
+# Seed Data
+!**/src/main/**/seed/
