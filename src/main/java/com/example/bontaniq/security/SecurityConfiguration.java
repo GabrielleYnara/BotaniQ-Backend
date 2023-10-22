@@ -50,11 +50,11 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //policies on every request:
-        http.authorizeHttpRequests(request -> request
+        http.authorizeHttpRequests((request) -> request
                     .requestMatchers("/auth/users/login/", "/auth/users/register/").permitAll() //public end-points
                     .requestMatchers("/h2-console/**").permitAll() //access to database
                     .anyRequest().authenticated())
-                .sessionManagement(session -> session
+                .sessionManagement((session) -> session
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS))//every time will check for jwt token, not session based.
                 .csrf((csrf) -> csrf.disable())
                 .headers((headers) -> headers
