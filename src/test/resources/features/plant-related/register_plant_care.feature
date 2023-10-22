@@ -12,3 +12,9 @@ Feature: Register Care for a Specific Plant
     Then the application should save the care event
     And I should see a success message
 
+  Scenario: Error when trying to register care for a plant without a date
+    Given The date care was administered is missing
+    When I request to register the care event
+    Then the application should not save the care event
+    And I should see an error message
+
