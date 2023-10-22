@@ -121,4 +121,9 @@ public class PlantStepDefs extends SetupTestDefs{
     public void theApplicationShouldSaveTheCareTypeAndFrequency() {
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
+
+    @Then("the application should not save the care type")
+    public void theApplicationShouldNotSaveTheCareType() {
+        Assert.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+    }
 }
