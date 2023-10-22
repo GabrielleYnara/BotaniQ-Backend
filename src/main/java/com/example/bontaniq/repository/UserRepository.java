@@ -4,6 +4,10 @@ import com.example.bontaniq.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+/**
+ *  A Spring Data JPA repository for managing User entities.<br>
+ *  It extends JpaRepository, which provides methods for basic CRUD operations.
+ *  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     /**
