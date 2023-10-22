@@ -19,6 +19,7 @@ public class PlantStepDefs extends SetupTestDefs{
     private int plantId;
     private String careTypeDescription;
     private String careTypeFrequency;
+    private int careTypeId;
     @When("I create a plant name {string} and type {string}")
     public void iCreateAPlantNameAndType(String name, String type) {
         log.info("I create a plant name " + name + " and type " + type);
@@ -125,5 +126,21 @@ public class PlantStepDefs extends SetupTestDefs{
     @Then("the application should not save the care type")
     public void theApplicationShouldNotSaveTheCareType() {
         Assert.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+    }
+
+    @And("I provide a valid care type")
+    public void iProvideAValidCareType() {
+        log.info("I provide a valid care type");
+        try{
+            careTypeId = 1;
+            RestAssured.baseURI = BASE_URL;
+            RequestSpecification request = RestAssured.given();
+            request.headers(createAuthenticatedHeader(token));
+            response = request.get(BASE_URL + port + "/gardens/1/plants/" + plantId + "/care/"+ careTypeId);
+            //ToDo: refactor end-points
+        } catch (Exception e){
+            log.severe("Something went wrong while verifying a valid care.");
+        }
+        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }
