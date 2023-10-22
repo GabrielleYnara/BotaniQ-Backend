@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDate;
 import java.util.logging.Logger;
 
 public class PlantStepDefs extends SetupTestDefs{
@@ -20,6 +21,7 @@ public class PlantStepDefs extends SetupTestDefs{
     private String careTypeDescription;
     private String careTypeFrequency;
     private int careTypeId;
+    private LocalDate careDate;
     @When("I create a plant name {string} and type {string}")
     public void iCreateAPlantNameAndType(String name, String type) {
         log.info("I create a plant name " + name + " and type " + type);
@@ -136,11 +138,38 @@ public class PlantStepDefs extends SetupTestDefs{
             RestAssured.baseURI = BASE_URL;
             RequestSpecification request = RestAssured.given();
             request.headers(createAuthenticatedHeader(token));
-            response = request.get(BASE_URL + port + "/gardens/1/plants/" + plantId + "/care/"+ careTypeId);
-            //ToDo: refactor end-points
+            response = request.get(BASE_URL + port + "/gardens/1/plants/" + plantId + "/care/" + careTypeId + "/");
+            //ToDo: refactor end-points, elegant solution.
         } catch (Exception e){
             log.severe("Something went wrong while verifying a valid care.");
         }
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        log.info("The care type is valid.");
+    }
+
+    @Given("I specify the date care was administered")
+    public void iSpecifyTheDateCareWasAdministered() {
+        this.careDate = LocalDate.parse("2023-10-21");
+        log.info("I specify the date care was administered");
+    }
+
+    @When("I request to register the care event")
+    public void iRequestToRegisterTheCareEvent() {
+        log.info("I request to register the care event.");
+        try{
+            RestAssured.baseURI = BASE_URL;
+            RequestSpecification request = RestAssured.given();
+            request.headers(createAuthenticatedHeader(token));
+            JSONObject requestBody = new JSONObject();
+            requestBody.put("date", careDate);
+            response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/1/plants/" + plantId + "/care/" + careTypeId + "/");
+        } catch (Exception e){
+            log.severe("Something went wrong while registering a plant care.");
+        }
+    }
+
+    @Then("the application should save the care event")
+    public void theApplicationShouldSaveTheCareEvent() {
+        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 }
