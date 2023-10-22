@@ -1,5 +1,6 @@
 package definitions;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -16,6 +17,8 @@ public class PlantStepDefs extends SetupTestDefs{
     private String name;
     private String type;
     private int plantId;
+    private String careTypeDescription;
+    private String careTypeFrequency;
     @When("I create a plant name {string} and type {string}")
     public void iCreateAPlantNameAndType(String name, String type) {
         log.info("I create a plant name " + name + " and type " + type);
@@ -84,5 +87,38 @@ public class PlantStepDefs extends SetupTestDefs{
     @Given("I provide an invalid plant")
     public void iProvideAnInvalidPlant() {
         this.plantId = -1;
+    }
+
+    @Given("I provide a {string} description for the care type")
+    public void iProvideADescriptionForTheCareType(String description) {
+        log.info("I provide " + description + " as a description for the care type.");
+        this.careTypeDescription = description;
+    }
+
+    @And("I set the frequency to {string}")
+    public void iSetTheFrequencyTo(String frequency) {
+        log.info("I provide " + frequency + " as a frequency for the care type.");
+        this.careTypeFrequency = frequency;
+    }
+
+    @When("I attempt to create the care type")
+    public void iAttemptToCreateTheCareType() {
+        log.info("I attempt to create the care type");
+        try{
+            RestAssured.baseURI = BASE_URL;
+            RequestSpecification request = RestAssured.given();
+            request.headers(createAuthenticatedHeader(token));
+            JSONObject requestBody = new JSONObject();
+            requestBody.put("description", careTypeDescription);
+            requestBody.put("frequency", careTypeFrequency);
+            response = request.post(BASE_URL + port + "/gardens/1/plants/" + plantId + "/care/");
+        }catch (Exception e){
+            log.severe("Something went wrong while creating a plant care type.");
+        }
+    }
+
+    @Then("the application should save the care type and frequency")
+    public void theApplicationShouldSaveTheCareTypeAndFrequency() {
+        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 }
