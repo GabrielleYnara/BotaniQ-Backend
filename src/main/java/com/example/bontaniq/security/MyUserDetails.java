@@ -11,7 +11,6 @@ import java.util.HashSet;
  * Holds user information for authorization and authentication. <br>
  * Implements the UserDetails interface from Spring Security.
  *
- * @version 1.0.0
  * <p> Imported and adapted from <a href="ttps://github.com/GabrielleYnara/habit-tracker
 ">Habit Tracker</a> </p>*/
 public class MyUserDetails implements UserDetails {
