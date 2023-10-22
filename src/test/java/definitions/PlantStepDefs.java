@@ -172,4 +172,14 @@ public class PlantStepDefs extends SetupTestDefs{
     public void theApplicationShouldSaveTheCareEvent() {
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
+
+    @Given("The date care was administered is missing")
+    public void theDateCareWasAdministeredIsMissing() {
+        this.careDate = null;
+    }
+
+    @Then("the application should not save the care event")
+    public void theApplicationShouldNotSaveTheCareEvent() {
+        Assert.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+    }
 }
