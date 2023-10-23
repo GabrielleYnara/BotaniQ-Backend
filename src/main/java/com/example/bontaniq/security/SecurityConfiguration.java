@@ -17,10 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * <br>
  * <p> Imported and adapted from <a href="ttps://github.com/GabrielleYnara/habit-tracker
  * ">Habit Tracker</a> </p>
- * @see <a href="https://docs.spring.io/spring-security/reference/5.8/migration/servlet/config.html">Use the new requestMatchers methods</a>
- * @see <a href="https://docs.spring.io/spring-security/reference/5.8/migration/servlet/session-management.html">Session Management Migrations</a>
- * @see <a href="https://docs.spring.io/spring-security/reference/5.8/migration/servlet/exploits.html">Defer Loading CsrfToken</a>
- * @see <a href="https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/config/annotation/web/builders/HttpSecurity.html#headers()">Class HttpSecurity</a>
  */
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -50,7 +46,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //policies on every request:
-        http.authorizeRequests().antMatchers("/auth/users", "/auth/users/login/", "/auth/users/register/").permitAll() //public end-points
+        http.authorizeRequests().antMatchers("/auth/users/login/", "/auth/users/register/").permitAll() //public end-points
                 .antMatchers("/h2-console/**").permitAll() //access to database
                 .anyRequest().authenticated()
                 .and().sessionManagement()
