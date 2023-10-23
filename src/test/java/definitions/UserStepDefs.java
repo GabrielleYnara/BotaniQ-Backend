@@ -1,5 +1,6 @@
 package definitions;
 
+import com.example.bontaniq.model.Profile;
 import com.example.bontaniq.model.User;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -22,22 +23,32 @@ public class UserStepDefs extends SetupTestDefs {
     private static User user = new User();
     private static final Logger log = Logger.getLogger(UserStepDefs.class.getName());
 
-    @When("I enter a unique email and password")
-    public void iEnterAUniqueEmailAndPassword() throws JSONException {
-        log.info("User Registration - I enter a unique email and password");
+    @When("I enter a unique email and additional user details")
+    public void iEnterAUniqueEmailAndAdditionalUserDetails(){
+        log.info("User Registration - I enter a unique email and additional user details.");
+        try {
             RestAssured.baseURI = BASE_URL;
             RequestSpecification request = RestAssured.given();
+
+            User user = new User("newuser@email.com", "password");
+            Profile profile = new Profile("Test", "User");
+
             JSONObject requestBody = new JSONObject();
-            requestBody.put("email", "newuser@email.com");
-            requestBody.put("password", "password");
+            requestBody.put("emailAddress", user.getEmailAddress());
+            requestBody.put("password", user.getPassword());
+//            requestBody.put("profile", profile);
             request.header("Content-Type", "application/json");
             response = request.body(requestBody.toString()).post(BASE_URL + port + "/auth/users/register/");
+        } catch (Exception e){
+            log.severe("Something went wrong during registration.\n"
+                + "Error: " + e.getMessage());
+        }
     }
 
     @Then("I should see a success message")
     public void iShouldSeeASuccessMessage() {
         log.info("Successful Registration");
-        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.CREATED.value(), response.getStatusCode());
     }
 
     @When("I enter an email already taken")
@@ -46,7 +57,7 @@ public class UserStepDefs extends SetupTestDefs {
         RestAssured.baseURI = BASE_URL;
         RequestSpecification request = RestAssured.given();
         JSONObject requestBody = new JSONObject();
-        requestBody.put("email", "newuser@email.com");
+        requestBody.put("emailAddress", "gabrielleynara@ymail.com");
         requestBody.put("password", "password");
         request.header("Content-Type", "application/json");
         response = request.body(requestBody.toString()).post(BASE_URL + port + "/auth/users/register/");
@@ -55,17 +66,17 @@ public class UserStepDefs extends SetupTestDefs {
     @Then("I should see an error message")
     public void iShouldSeeAnErrorMessage() {
         log.info("THEN - I should see an error message.");
-        Assert.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.CONFLICT.value(), response.getStatusCode());
     }
     @Given("I am logged in")
     public void iAmLoggedIn() throws JSONException {
         log.info("GIVEN - I am logged in");
         RestAssured.baseURI = BASE_URL;
         RequestSpecification request = RestAssured.given();
+        request.header("Content-Type", "application/json");
         JSONObject requestBody = new JSONObject();
         requestBody.put("email", "newuser@email.com");
         requestBody.put("password", "password");
-        request.header("Content-Type", "application/json");
         response = request.body(requestBody.toString()).post(BASE_URL + port + "/auth/users/login/");
         token = response.jsonPath().getString("jwt");
         log.info("TOKEN " + token);
@@ -143,7 +154,6 @@ public class UserStepDefs extends SetupTestDefs {
             log.severe("Something went wrong during login test.\n"
                 + "Error: " + e.getMessage());
         }
-
     }
 
     @Then("I should be authorized")
@@ -168,7 +178,6 @@ public class UserStepDefs extends SetupTestDefs {
                     + "Error: " + e.getMessage());
         }
     }
-
 
     @Then("I should see a failed login message")
     public void iShouldSeeAFailedLoginMessage() {
