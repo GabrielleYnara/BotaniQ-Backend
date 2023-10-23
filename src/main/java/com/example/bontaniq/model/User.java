@@ -1,7 +1,8 @@
 package com.example.bontaniq.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name="users")
