@@ -1,5 +1,6 @@
 package definitions;
 
+import com.example.bontaniq.model.User;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -18,6 +19,7 @@ import java.util.logging.Logger;
  */
 public class UserStepDefs extends SetupTestDefs {
     private static Response response;
+    private static User user = new User();
     private static final Logger log = Logger.getLogger(UserStepDefs.class.getName());
 
     @When("I enter a unique email and password")
@@ -111,36 +113,43 @@ public class UserStepDefs extends SetupTestDefs {
         Assert.assertNotEquals(HttpStatus.OK, response.getStatusCode()); //indicating an error occurred.
     }
 
-    @Given("I am already registered")
-    public void iAmAlreadyRegistered() throws JSONException {
-        log.info("GIVEN - I am already registered.");
-        RestAssured.baseURI = BASE_URL;
-        RequestSpecification request = RestAssured.given();
-        JSONObject requestBody = new JSONObject();
-        requestBody.put("email", "newuser@email.com");
-        requestBody.put("password", "password");
-        request.header("Content-Type", "application/json");
-        response = request.body(requestBody.toString()).post(BASE_URL + port + "/auth/users/register/");
-        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    @Given("I am a registered user")
+    public void iAmARegisteredUser() throws JSONException {
+//        log.info("GIVEN - I am already registered.");
+//        RestAssured.baseURI = BASE_URL;
+//        RequestSpecification request = RestAssured.given();
+//        JSONObject requestBody = new JSONObject();
+//        requestBody.put("email", "newuser@email.com");
+//        requestBody.put("password", "password");
+//        request.header("Content-Type", "application/json");
+//        response = request.body(requestBody.toString()).post(BASE_URL + port + "/auth/users/register/");
+//        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+
+        user.setEmailAddress("gabrielleynara@ymail.com");
+        user.setPassword("gaby1234");
     }
     @When("I provide a valid email and password pair")
-    public void iProvideAValidEmailAndPasswordPair() throws JSONException {
-        RestAssured.baseURI = BASE_URL;
-        RequestSpecification request = RestAssured.given();
-        JSONObject requestBody = new JSONObject();
-        requestBody.put("email", "newuser@email.com");
-        requestBody.put("password", "password");
-        request.header("Content-Type", "application/json");
-        response = request.body(requestBody.toString()).post(BASE_URL + port + "/auth/users/login/");
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode()); // so the test fails?
+    public void iProvideAValidEmailAndPasswordPair() {
+        log.info("I provide a valid email and password pair and attempt to login.");
+        try{
+            RestAssured.baseURI = BASE_URL;
+            RequestSpecification request = RestAssured.given();
+            request.header("Content-Type", "application/json");
+            JSONObject requestBody = new JSONObject();
+            requestBody.put("emailAddress", user.getEmailAddress());
+            requestBody.put("password", user.getPassword());
+            response = request.body(requestBody.toString()).post(BASE_URL + port + "/auth/users/login/");
+        } catch (Exception e){
+            log.severe("Something went wrong during login test.\n"
+                + "Error: " + e.getMessage());
+        }
+
     }
 
-    @Then("I should be redirected to the home page")
-    public void iShouldBeRedirectedToTheHomePage() {
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-        // ToDo: test if the user was redirected.
-        String currentUrl = BASE_URL + port + "/home/";
-        Assert.assertEquals(BASE_URL + port + "/home/", currentUrl);
+    @Then("I should be authorized")
+    public void iShouldBeAuthorized() {
+        log.info("User logged in.");
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
     }
 
     @When("I provide an incorrect email or password")
@@ -149,9 +158,8 @@ public class UserStepDefs extends SetupTestDefs {
         RestAssured.baseURI = BASE_URL;
         RequestSpecification request = RestAssured.given();
         JSONObject requestBody = new JSONObject();
-        requestBody.put("email", "newuser@email.com");
+        requestBody.put("emailAddress", "newuser@email.com");
         requestBody.put("password", "wrong-password");
-        request.header("Content-Type", "application/json");
         response = request.body(requestBody.toString()).post(BASE_URL + port + "/auth/users/login/");
     }
 
