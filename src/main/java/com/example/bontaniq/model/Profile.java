@@ -27,6 +27,11 @@ public class Profile {
     public Profile() {
     }
 
+    public Profile(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
     public Profile(Long id, String firstName, String lastName, String bio, User user) {
         this.id = id;
         this.firstName = firstName;
