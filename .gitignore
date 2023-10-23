@@ -3,7 +3,6 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-application-dev.properties
 
 ### STS ###
 .apt_generated
@@ -21,9 +20,7 @@ application-dev.properties
 *.ipr
 
 # Java/Spring Boot specific
-*.properties
-!src/main/resources/application.properties
-!src/main/resources/application-*.properties
+/src/main/resources/application-dev.properties
 
 ### NetBeans ###
 /nbproject/private/
@@ -48,4 +45,4 @@ build/
 Thumbs.db
 
 # Seed Data
-!**/src/main/**/seed/
+/src/main/**/seed/
