@@ -3,6 +3,7 @@ package com.example.bontaniq.controller;
 import com.example.bontaniq.model.Profile;
 import com.example.bontaniq.model.User;
 import com.example.bontaniq.model.request.LoginRequest;
+import com.example.bontaniq.model.request.UserRegistrationRequest;
 import com.example.bontaniq.model.response.LoginResponse;
 import com.example.bontaniq.security.MyUserDetails;
 import com.example.bontaniq.service.UserService;
@@ -55,7 +56,10 @@ public class UserController {
      * @return The newly created User object.
      */
     @PostMapping(path = "/register/") //http://localhost:9092/auth/users/register/
-    public ResponseEntity<?> registerUser(@RequestBody User user){
+    public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest userRegistrationRequest){
+        logger.info("Initiating User Registration.");
+        User user = userRegistrationRequest.getUser();
+        user.setProfile(userRegistrationRequest.getProfile());
         User newUser = userService.registerUser(user);
         if (newUser != null){
             message.put("message", "Registration completed.");

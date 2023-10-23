@@ -6,6 +6,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.json.JSONException;
@@ -30,14 +31,21 @@ public class UserStepDefs extends SetupTestDefs {
             RestAssured.baseURI = BASE_URL;
             RequestSpecification request = RestAssured.given();
 
-            User user = new User("newuser@email.com", "password");
-            Profile profile = new Profile("Test", "User");
+            JSONObject userObject = new JSONObject();
+            userObject.put("emailAddress", "newuser@email.com");
+            userObject.put("password", "password");
+
+            JSONObject profileObject = new JSONObject();
+            profileObject.put("firstName", "Test");
+            profileObject.put("lastName", "User");
 
             JSONObject requestBody = new JSONObject();
-            requestBody.put("emailAddress", user.getEmailAddress());
-            requestBody.put("password", user.getPassword());
-//            requestBody.put("profile", profile);
+
+            requestBody.put("profile", profileObject);
+            requestBody.put("user", userObject);
+
             request.header("Content-Type", "application/json");
+            log.info("requestBody.toString(): " + requestBody);
             response = request.body(requestBody.toString()).post(BASE_URL + port + "/auth/users/register/");
         } catch (Exception e){
             log.severe("Something went wrong during registration.\n"
@@ -47,7 +55,10 @@ public class UserStepDefs extends SetupTestDefs {
 
     @Then("I should see a success message")
     public void iShouldSeeASuccessMessage() {
-        log.info("Successful Registration");
+        log.info("Successful Registration.");
+        JsonPath jsonPath = response.jsonPath();
+        Object newUser = jsonPath.get("data");
+        log.info("User: " + newUser);
         Assert.assertEquals(HttpStatus.CREATED.value(), response.getStatusCode());
     }
 

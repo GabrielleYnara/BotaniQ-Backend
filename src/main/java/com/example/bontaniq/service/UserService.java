@@ -69,7 +69,7 @@ public class UserService {
         if (userOptional.isEmpty()){ // email not registered yet
             logger.info("Email provided is not registered yet.");
             user.setPassword(passwordEncoder.encode(user.getPassword())); //encode password given
-//            profileRepository.save(user.getProfile());
+            profileRepository.save(user.getProfile());
             return userRepository.save(user);
         } else {
             logger.severe("user with email address " + user.getEmailAddress() + " already exist.");
