@@ -1,5 +1,6 @@
 package com.example.bontaniq.controller;
 
+import com.example.bontaniq.model.Profile;
 import com.example.bontaniq.model.User;
 import com.example.bontaniq.model.request.LoginRequest;
 import com.example.bontaniq.model.response.LoginResponse;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -25,7 +27,8 @@ import java.util.logging.Logger;
 @RequestMapping(path = "/auth/users") //http://localhost:9092/auth/users
 public class UserController {
     private UserService userService;
-    private Logger logger = Logger.getLogger(UserController.class.getName());
+    private final Logger logger = Logger.getLogger(UserController.class.getName());
+    static HashMap<String, Object> message = new HashMap<>();
     /**
      * Injects dependencies and enables userController to access the resources
      * @param userService The Service responsible for user business logic.
@@ -52,9 +55,16 @@ public class UserController {
      * @return The newly created User object.
      */
     @PostMapping(path = "/register/") //http://localhost:9092/auth/users/register/
-    public User createUser(@RequestBody User user){
-//        return userService.createUser(user);
-        return user;
+    public ResponseEntity<?> registerUser(@RequestBody User user){
+        User newUser = userService.registerUser(user);
+        if (newUser != null){
+            message.put("message", "Registration completed.");
+            message.put("data", newUser);
+            return new ResponseEntity<>(message, HttpStatus.CREATED);
+        } else {
+            message.put("message", "Unable to register.");
+            return new ResponseEntity<>(message, HttpStatus.CONFLICT);
+        }
     }
 
     /**

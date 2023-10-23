@@ -1,7 +1,11 @@
 package com.example.bontaniq.service;
 
+import com.example.bontaniq.controller.UserController;
+import com.example.bontaniq.exception.exception.InformationExistException;
+import com.example.bontaniq.model.Profile;
 import com.example.bontaniq.model.User;
 import com.example.bontaniq.model.request.LoginRequest;
+import com.example.bontaniq.repository.ProfileRepository;
 import com.example.bontaniq.repository.UserRepository;
 import com.example.bontaniq.security.JWTUtils;
 import com.example.bontaniq.security.MyUserDetails;
@@ -15,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 
 /**
  * Represents the User Service, responsible for housing business logic related to users.<br>
@@ -25,6 +30,9 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
+
+    private Logger logger = Logger.getLogger(UserController.class.getName());
 
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
@@ -33,19 +41,40 @@ public class UserService {
     /**
      * Injects dependencies and enables userService to access the resources.
      *
-     * @param userRepository The repository for user-related CRUD operations.
-     * @param passwordEncoder The encoder used for password hashing.
-     * @param jwtUtils The utility class for JWT token generation and validation.
+     * @param userRepository        The repository for user-related CRUD operations.
+     * @param profileRepository     The repository for profile-related CRUD operations.
+     * @param passwordEncoder       The encoder used for password hashing.
+     * @param jwtUtils              The utility class for JWT token generation and validation.
      * @param authenticationManager Manages authentication within the security context.
      */
     @Autowired
-    public UserService(UserRepository userRepository, @Lazy PasswordEncoder passwordEncoder,
+    public UserService(UserRepository userRepository, ProfileRepository profileRepository, @Lazy PasswordEncoder passwordEncoder,
                        JWTUtils jwtUtils,
                        @Lazy AuthenticationManager authenticationManager) { //@LAZY - loads as needed
         this.userRepository = userRepository;
+        this.profileRepository = profileRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtils = jwtUtils;
         this.authenticationManager = authenticationManager;
+    }
+
+    /**
+     * Registers a new user, assigns
+     * @param user User object containing details.
+     * @return The registered User.
+     * @throws InformationExistException If email is already registered.
+     */
+    public User registerUser(User user){
+        Optional<User> userOptional = Optional.ofNullable(userRepository.findUserByEmailAddress(user.getEmailAddress())); //checks if email address already exists in database
+        if (userOptional.isEmpty()){ // email not registered yet
+            logger.info("Email provided is not registered yet.");
+            user.setPassword(passwordEncoder.encode(user.getPassword())); //encode password given
+//            profileRepository.save(user.getProfile());
+            return userRepository.save(user);
+        } else {
+            logger.severe("user with email address " + user.getEmailAddress() + " already exist.");
+            throw new InformationExistException("user with email address " + user.getEmailAddress() + " already exist.");
+        }
     }
 
     /**
@@ -70,6 +99,7 @@ public class UserService {
         UsernamePasswordAuthenticationToken authenticationToken = new
                 UsernamePasswordAuthenticationToken(loginRequest.getEmailAddress(), loginRequest.getPassword());
         try{
+            logger.info("Service: Attempt to login.");
             Authentication authentication = authenticationManager.authenticate((authenticationToken)); //authenticate the user
             SecurityContextHolder.getContext().setAuthentication(authentication); //set security context
             MyUserDetails myUserDetails = ( MyUserDetails ) authentication.getPrincipal(); //get user details from authenticated object
