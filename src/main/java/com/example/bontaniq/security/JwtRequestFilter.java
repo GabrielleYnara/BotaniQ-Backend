@@ -85,6 +85,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        logger.info("Attempting to parse JWT from request.");
         try{
             String jwt = parseJwt(request); //Invokes the Jwt parser and parses the request
             if (jwt != null && jwtUtils.validateJwtToken(jwt)){
@@ -93,8 +94,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()); //checks credentials
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); // this request is valid
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken); // grants access to the resource
+                logger.info("JWT token validation and user authentication successful.");
             }
-            logger.info("JWT token validation and user authentication successful.");
         } catch (Exception e){
             logger.severe("JWT token validation and user authentication failed.\n"
                 + "Error: " + e.getMessage());
