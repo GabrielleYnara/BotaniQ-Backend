@@ -16,18 +16,23 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) //restricts the access
     private String password;
 
-    public User() {
-    }
+    @OneToOne(cascade = CascadeType.ALL) //when loading user, load profile as well
+    @JoinColumn(name = "profile_id", referencedColumnName = "id")
+    private Profile profile;
 
-    public User(Long id, String emailAddress, String password) {
-        this.id = id;
-        this.emailAddress = emailAddress;
-        this.password = password;
+    public User() {
     }
 
     public User(String emailAddress, String password) {
         this.emailAddress = emailAddress;
         this.password = password;
+    }
+
+    public User(Long id, String emailAddress, String password, Profile profile) {
+        this.id = id;
+        this.emailAddress = emailAddress;
+        this.password = password;
+        this.profile = profile;
     }
 
     public Long getId() {
@@ -51,12 +56,21 @@ public class User {
         this.password = password;
     }
 
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", emailAddress='" + emailAddress + '\'' +
                 ", password='" + password + '\'' +
+                ", profile=" + profile +
                 '}';
     }
 }
