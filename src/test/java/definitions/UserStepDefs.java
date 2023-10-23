@@ -154,19 +154,25 @@ public class UserStepDefs extends SetupTestDefs {
 
     @When("I provide an incorrect email or password")
     public void iProvideAnIncorrectEmailOrPassword() throws JSONException {
-        log.info("WHEN - I provide an incorrect email or password");
-        RestAssured.baseURI = BASE_URL;
-        RequestSpecification request = RestAssured.given();
-        JSONObject requestBody = new JSONObject();
-        requestBody.put("emailAddress", "newuser@email.com");
-        requestBody.put("password", "wrong-password");
-        response = request.body(requestBody.toString()).post(BASE_URL + port + "/auth/users/login/");
+        log.info("I provide an invalid email and password pair and attempt to login.");
+        try{
+            RestAssured.baseURI = BASE_URL;
+            RequestSpecification request = RestAssured.given();
+            request.header("Content-Type", "application/json");
+            JSONObject requestBody = new JSONObject();
+            requestBody.put("emailAddress", user.getEmailAddress());
+            requestBody.put("password", "wrong-password");
+            response = request.body(requestBody.toString()).post(BASE_URL + port + "/auth/users/login/");
+        } catch (Exception e){
+            log.severe("Something went wrong during login test.\n"
+                    + "Error: " + e.getMessage());
+        }
     }
 
 
     @Then("I should see a failed login message")
     public void iShouldSeeAFailedLoginMessage() {
-        log.info("THEN - I should see a failed login message.");
-        Assert.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        log.severe("Login failed! Invalid email or password.");
+        Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getStatusCode());
     }
 }
