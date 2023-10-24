@@ -14,6 +14,5 @@ Feature: Profile Update
     | Gabrielle | Ynara    | Something about me |
 
   Scenario: Profile update failure due to server error
-    Given I am logged in
     When the server encounters an error
     Then I should see the profile update failed

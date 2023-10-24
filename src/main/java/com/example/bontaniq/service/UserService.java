@@ -62,7 +62,7 @@ public class UserService {
     }
 
     /**
-     * Registers a new user, assigns
+     * Registers a new user, assigning a profile to it.
      * @param user User object containing details.
      * @return The registered User.
      * @throws InformationExistException If email is already registered.
@@ -120,6 +120,7 @@ public class UserService {
      * <br>
      * <p> Imported and adapted from <a href="https://github.com/GabrielleYnara/habit-tracker
      *      * ">Habit Tracker</a> </p>
+     * @see <a href="https://www.oracle.com/technical-resources/articles/java/javareflection.html">Using Java Reflection</a>
      * @param profile Profile object with the updated properties.
      * @return The updated object.
      */
@@ -155,6 +156,7 @@ public class UserService {
      * @return Current logged in User object
      */
     public User getCurrentLoggedInUser(){
+        logger.info("Retrieving the current logged in User");
         MyUserDetails userDetails = (MyUserDetails) SecurityContextHolder //After jwt is generated, Security Context Holder is created to hold the user's state
                 .getContext().getAuthentication().getPrincipal(); // the entire User object, with authentication details
         return userDetails.getUser();
