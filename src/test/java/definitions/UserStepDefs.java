@@ -63,15 +63,9 @@ public class UserStepDefs extends SetupTestDefs {
     }
 
     @When("I enter an email already taken")
-    public void iEnterAnEmailAlreadyTaken() throws JSONException {
+    public void iEnterAnEmailAlreadyTaken() {
         log.info("User Registration - I enter an email already taken.");
-        RestAssured.baseURI = BASE_URL;
-        RequestSpecification request = RestAssured.given();
-        JSONObject requestBody = new JSONObject();
-        requestBody.put("emailAddress", "gabrielleynara@ymail.com");
-        requestBody.put("password", "password");
-        request.header("Content-Type", "application/json");
-        response = request.body(requestBody.toString()).post(BASE_URL + port + "/auth/users/register/");
+        this.iEnterAUniqueEmailAndAdditionalUserDetails();
     }
 
     @Then("I should see an error message")
