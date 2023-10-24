@@ -2,6 +2,7 @@ package com.example.bontaniq.service;
 
 import com.example.bontaniq.controller.UserController;
 import com.example.bontaniq.exception.exception.InformationExistException;
+import com.example.bontaniq.exception.exception.InformationNotFoundException;
 import com.example.bontaniq.model.Profile;
 import com.example.bontaniq.model.User;
 import com.example.bontaniq.model.request.LoginRequest;
@@ -18,6 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -107,5 +110,53 @@ public class UserService {
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Updates the specified fields of a given profile using Java Reflection.
+     * <p>
+     * Only the necessary fields of the class are updated.
+     * </p>
+     * <br>
+     * <p> Imported and adapted from <a href="https://github.com/GabrielleYnara/habit-tracker
+     *      * ">Habit Tracker</a> </p>
+     * @param profile Profile object with the updated properties.
+     * @return The updated object.
+     */
+    public Optional<User> updateUserProfile(Profile profile) throws IllegalAccessException {
+        logger.info("Initializing user profile update");
+        User user = this.getCurrentLoggedInUser();
+        Optional<Profile> originalProfile = profileRepository.findById(user.getProfile().getId());
+
+        if (originalProfile.isPresent()){
+            logger.info("User and Profile records found.");
+            try {
+                for (Field field : Profile.class.getDeclaredFields()) { //loop through class fields
+                    field.setAccessible(true); //make private fields accessible
+                    Object newValue = field.get(profile);
+                    Object originalValue = field.get(originalProfile.get());
+                    if (newValue != null && !newValue.equals(originalValue)) { //if not null and different from original
+                        field.set(originalProfile.get(), newValue);
+                    }
+                }
+                user.setProfile(profileRepository.save(originalProfile.get()));
+                logger.info("User profile updated!");
+                return Optional.of(user);
+            } catch (IllegalArgumentException e){
+                throw new IllegalAccessException(e.getMessage());
+            }
+        } else {
+            throw new InformationNotFoundException("Profile with id " + profile.getId() + "not found.");
+        }
+    }
+
+    /**
+     * Extracts user information from context holder
+     * @return Current logged in User object
+     */
+    public User getCurrentLoggedInUser(){
+        MyUserDetails userDetails = (MyUserDetails) SecurityContextHolder //After jwt is generated, Security Context Holder is created to hold the user's state
+                .getContext().getAuthentication().getPrincipal(); // the entire User object, with authentication details
+        return userDetails.getUser();
     }
 }

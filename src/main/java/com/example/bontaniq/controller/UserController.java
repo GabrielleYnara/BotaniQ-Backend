@@ -39,20 +39,12 @@ public class UserController {
         this.userService = userService;
     }
 
-    /**
-     * Extracts user information from context holder
-     * @return Current logged in User object
-     */
-    public static User getCurrentLoggedInUser(){
-        MyUserDetails userDetails = (MyUserDetails) SecurityContextHolder //After jwt is generated, Security Context Holder is created to hold the user's state
-                .getContext().getAuthentication().getPrincipal(); // the entire User object, with authentication details
-        return userDetails.getUser();
-    }
+
 
     /**
      * Handles user registration by creating a new user.
      *
-     * @param user User object containing the information of the user to be registered.
+     * @param userRegistrationRequest userRegistrationRequest object containing user and its profile to be registered.
      * @return The newly created User object.
      */
     @PostMapping(path = "/register/") //http://localhost:9092/auth/users/register/
@@ -100,16 +92,24 @@ public class UserController {
 //        return getCurrentLoggedInUser().getProfile();
 //    }
 //
-//    /**
-//     * Updates the user's profile, allowing for individual or multiple attribute changes.
-//     *
-//     * @param profile Profile object with new details.
-//     * @return Updated profile.
-//     */
-//    @PutMapping(path="/profile/") //http://localhost:9092/auth/users/profile/
-//    public Profile updateUserProfile(@RequestBody Profile profile){
-//        User user = getCurrentLoggedInUser();
-//        user.setProfile(profile);
-//        return userService.updateUserProfile(user).getProfile();
-//    }
+    /**
+     * Updates the user's profile, allowing for individual or multiple attribute changes.
+     *
+     * @param profile Profile object with new details.
+     * @return Updated profile.
+     */
+    @PutMapping(path="/profile/") //http://localhost:9092/auth/users/profile/
+    public ResponseEntity<?> updateUserProfile(@RequestBody Profile profile) throws IllegalAccessException {
+        logger.info("Request to update user's profile");
+        Optional<User> updatedUser = userService.updateUserProfile(profile);
+        if(updatedUser.isPresent()){
+            message.put("message","Successful profile update!");
+            message.put("user", updatedUser.get());
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        } else {
+            message.put("message","Profile update failed!");
+            return new ResponseEntity<>(message, HttpStatus.CONFLICT);
+        }
+
+    }
 }
