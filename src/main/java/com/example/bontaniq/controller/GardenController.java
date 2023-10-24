@@ -5,10 +5,7 @@ import com.example.bontaniq.service.GardenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -32,10 +29,24 @@ public class GardenController extends SharedResourceContainer {
             requestResponse.put("data", newGarden);
             return new ResponseEntity<>(requestResponse, HttpStatus.CREATED);
         } else {
-//            logger.severe("Garden creation failed!");
             requestResponse.put("message", "Garden creation failed!");
             logger.severe(requestResponse.get("message").toString());
             return new ResponseEntity<>(requestResponse, HttpStatus.CONFLICT);
+        }
+    }
+
+    @GetMapping(path = "/{gardenId}/") //http://localhost:9092/gardens/1/
+    public ResponseEntity<?> getGarden(@PathVariable(value = "gardenId") Long gardenId){
+        logger.info("Attempt to retrieve a garden with id " + gardenId);
+        Optional<Garden> garden = gardenService.getGarden(gardenId);
+        if (garden.isPresent()){
+            requestResponse.put("message", "Garden retrieved successfully.");
+            requestResponse.put("data", garden);
+            return new ResponseEntity<>(requestResponse, HttpStatus.OK);
+        } else {
+            requestResponse.put("message", "Garden not found!");
+            logger.severe(requestResponse.get("message").toString());
+            return new ResponseEntity<>(requestResponse, HttpStatus.NOT_FOUND);
         }
     }
 }

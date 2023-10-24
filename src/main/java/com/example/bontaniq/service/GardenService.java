@@ -1,6 +1,7 @@
 package com.example.bontaniq.service;
 
 import com.example.bontaniq.exception.exception.InformationExistException;
+import com.example.bontaniq.exception.exception.InformationNotFoundException;
 import com.example.bontaniq.model.Garden;
 import com.example.bontaniq.model.User;
 import com.example.bontaniq.repository.GardenRepository;
@@ -36,6 +37,18 @@ public class GardenService {
             garden.setUser(currentUser);
             logger.info("Garden " + garden.getDescription() + " created!");
             return Optional.of(gardenRepository.save(garden));
+        }
+    }
+    public Optional<Garden> getGarden(Long gardenId){
+        logger.info("Initializing retrieve garden:");
+        User currentUser = userService.getCurrentLoggedInUser();
+        Optional<Garden> gardenOptional = gardenRepository.findByIdAndUserId(gardenId, currentUser.getId());
+        if (gardenOptional.isPresent()){
+            logger.info("Garden " + gardenOptional.get().getDescription() + " found.");
+            return gardenOptional;
+        } else {
+            logger.severe("Garden with id " + gardenId + " not found.");
+            throw new InformationNotFoundException("Garden with id " + gardenId + " not found.");
         }
     }
 }
