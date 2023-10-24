@@ -1,8 +1,11 @@
 package com.example.bontaniq.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name="users")
@@ -19,6 +22,9 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL) //when loading user, load profile as well
     @JoinColumn(name = "profile_id", referencedColumnName = "id")
     private Profile profile;
+    @OneToMany(mappedBy = "user", orphanRemoval = true) // maps the relationship and remove gardenList data if user is deleted
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<Garden> gardenList;
 
     public User() {
     }
