@@ -49,4 +49,19 @@ public class GardenController extends SharedResourceContainer {
             return new ResponseEntity<>(requestResponse, HttpStatus.NOT_FOUND);
         }
     }
+
+    @PutMapping(path = "/{gardenId}/") //http://localhost:9092/gardens/1/
+    public ResponseEntity<?> updateGarden(@RequestBody Garden garden, @PathVariable(value = "gardenId") Long gardenId) throws IllegalAccessException {
+        logger.info("Attempt to update garden.");
+        Optional<Garden> updatedGarden = gardenService.updateGarden(garden, gardenId);
+        if (updatedGarden.isPresent()){
+            requestResponse.put("message", "Garden successfully updated");
+            requestResponse.put("date", updatedGarden);
+            return new ResponseEntity<>(requestResponse, HttpStatus.OK);
+        } else {
+            requestResponse.put("message", "Garden update failed!");
+            return new ResponseEntity<>(requestResponse, HttpStatus.CONFLICT);
+        }
+
+    }
 }

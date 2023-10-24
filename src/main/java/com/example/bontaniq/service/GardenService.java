@@ -3,11 +3,13 @@ package com.example.bontaniq.service;
 import com.example.bontaniq.exception.exception.InformationExistException;
 import com.example.bontaniq.exception.exception.InformationNotFoundException;
 import com.example.bontaniq.model.Garden;
+import com.example.bontaniq.model.Profile;
 import com.example.bontaniq.model.User;
 import com.example.bontaniq.repository.GardenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -15,7 +17,6 @@ import java.util.logging.Logger;
 public class GardenService {
     private final GardenRepository gardenRepository;
     private final UserService userService;
-
     private Logger logger = Logger.getLogger(GardenRepository.class.getName());
 
     @Autowired
@@ -49,6 +50,31 @@ public class GardenService {
         } else {
             logger.severe("Garden with id " + gardenId + " not found.");
             throw new InformationNotFoundException("Garden with id " + gardenId + " not found.");
+        }
+    }
+
+    public Optional<Garden> updateGarden(Garden garden, Long gardenId) throws IllegalAccessException {
+        logger.info("Initializing garden update");
+        User user = userService.getCurrentLoggedInUser();
+        Optional<Garden> originalGarden = gardenRepository.findByIdAndUserId(gardenId, user.getId());
+        if (originalGarden.isPresent()){
+            logger.info("Garden record found.");
+            try {
+                for (Field field : Garden.class.getDeclaredFields()) { //loop through class fields
+                    field.setAccessible(true); //make private fields accessible
+                    Object newValue = field.get(garden);
+                    Object originalValue = field.get(originalGarden.get());
+                    if (newValue != null && !newValue.equals(originalValue)) { //if not null and different from original
+                        field.set(originalGarden.get(), newValue);
+                    }
+                }
+                logger.info("Garden updated!");
+                return Optional.of(gardenRepository.save(originalGarden.get()));
+            } catch (IllegalArgumentException e){
+                throw new IllegalAccessException(e.getMessage());
+            }
+        } else {
+            throw new InformationNotFoundException("Garden with id " + gardenId + "not found.");
         }
     }
 }
