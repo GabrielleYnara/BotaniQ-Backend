@@ -1,6 +1,6 @@
 package com.example.bontaniq.service;
 
-import com.example.bontaniq.exception.exception.InformationExistException;
+import com.example.bontaniq.exception.exception.IllegalArgumentException;
 import com.example.bontaniq.exception.exception.InformationNotFoundException;
 import com.example.bontaniq.model.Garden;
 import com.example.bontaniq.model.Plant;
@@ -27,8 +27,12 @@ public class PlantService extends ServiceSharedResources{
         Optional<Garden> gardenOptional = gardenService.getGardenById(gardenId);
         if(gardenOptional.isPresent()){
             plant.setGarden(gardenOptional.get());
-            logger.info("Plant created!");
-            return Optional.of(plantRepository.save(plant));
+            if (plant.getName() != null && plant.getType() != null) {
+                logger.info("Plant created!");
+                return Optional.of(plantRepository.save(plant));
+            } else {
+                throw new IllegalArgumentException("All fields must be provided.");
+            }
         } else {
             throw new InformationNotFoundException("Garden not found! Can't create a plant without a garden.");
         }
