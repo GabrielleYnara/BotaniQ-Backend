@@ -36,21 +36,25 @@ public class GardenStepDefs extends SetupTestDefs{
         this.notes = notes;
     }
 
-    @When("I attempt to create a garden just with a description")
-    public void iAttemptToCreateAGardenJustWithADescription() {
+    @When("I attempt to create a garden with a description {string} and notes {string}")
+    public void iAttemptToCreateAGardenWithADescriptionAndNotes(String description, String notes) {
         log.info("I attempt to create a garden just with a description.");
         try {
             RestAssured.baseURI = BASE_URL;
             RequestSpecification request = RestAssured.given();
             JSONObject requestBody = new JSONObject();
-            requestBody.put("description", description);
+            if (!description.isEmpty()) {
+                requestBody.put("description", description);
+            }
+            if (!notes.isEmpty()){
+                requestBody.put("notes", notes);
+            }
             request.headers(createAuthenticatedHeader(token));
             response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/");
         } catch (Exception e){
             log.severe("Something went wrong when I attempt to create a garden just with a description.\n"
             + "Error: " + e.getMessage());
         }
-
     }
 
     @When("I attempt to create a garden with a description and notes")
@@ -74,12 +78,7 @@ public class GardenStepDefs extends SetupTestDefs{
     @Then("the garden should be saved successfully")
     public void theGardenShouldBeSavedSuccessfully() {
         log.info("the garden was saved successfully");
-        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-    }
-
-    @And("no other garden has the description {string}")
-    public void noOtherGardenHasTheDescription(String description) {
-        Assert.assertEquals(false, aGardenWithDescriptionAlreadyExists(description));
+        Assert.assertEquals(HttpStatus.CREATED.value(), response.getStatusCode());
     }
 
     @Given("a garden with description {string} already exists")
@@ -90,7 +89,7 @@ public class GardenStepDefs extends SetupTestDefs{
             RequestSpecification request = RestAssured.given();
             request.headers(createAuthenticatedHeader(token));
             response = request.queryParam("description", description).get(BASE_URL + port + "/gardens");
-            Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+            Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
             if (response.getStatusCode() == 200) {
                 return true;
             }
@@ -101,15 +100,9 @@ public class GardenStepDefs extends SetupTestDefs{
         return false;
     }
 
-    @When("I attempt to create a duplicated garden")
-    public void iAttemptToCreateADuplicatedGarden() {
-        log.info("I attempt to create a duplicated garden.");
-        this.iAttemptToCreateAGardenJustWithADescription();
-    }
-
     @Then("I should see an error message {string}")
     public void iShouldSeeAnErrorMessage(String message) {
-        Assert.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.CONFLICT.value(), response.getStatusCode());
         log.severe("Error message: " + message);
     }
 
@@ -224,6 +217,5 @@ public class GardenStepDefs extends SetupTestDefs{
             log.severe("Something went wrong when I provide an invalid garden.\n"
                     + "Error: " + e.getMessage());
         }
-
     }
 }
