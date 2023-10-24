@@ -14,7 +14,7 @@ public class SetupTestDefs {
 
     @LocalServerPort
     protected String port;
-    protected String token;
+    protected static String token;
     protected static Response response;
     protected HttpHeaders createAuthenticatedHeader(String token) {
         HttpHeaders headers = new HttpHeaders();

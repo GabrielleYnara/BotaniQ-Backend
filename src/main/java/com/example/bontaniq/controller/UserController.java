@@ -5,15 +5,12 @@ import com.example.bontaniq.model.User;
 import com.example.bontaniq.model.request.LoginRequest;
 import com.example.bontaniq.model.request.UserRegistrationRequest;
 import com.example.bontaniq.model.response.LoginResponse;
-import com.example.bontaniq.security.MyUserDetails;
 import com.example.bontaniq.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -26,10 +23,9 @@ import java.util.logging.Logger;
  */
 @RestController
 @RequestMapping(path = "/auth/users") //http://localhost:9092/auth/users
-public class UserController {
+public class UserController extends SharedResourceContainer {
     private UserService userService;
-    private final Logger logger = Logger.getLogger(UserController.class.getName());
-    static HashMap<String, Object> message = new HashMap<>();
+
     /**
      * Injects dependencies and enables userController to access the resources
      * @param userService The Service responsible for user business logic.
@@ -54,12 +50,12 @@ public class UserController {
         user.setProfile(userRegistrationRequest.getProfile());
         User newUser = userService.registerUser(user);
         if (newUser != null){
-            message.put("message", "Registration completed.");
-            message.put("data", newUser);
-            return new ResponseEntity<>(message, HttpStatus.CREATED);
+            requestResponse.put("message", "Registration completed.");
+            requestResponse.put("data", newUser);
+            return new ResponseEntity<>(requestResponse, HttpStatus.CREATED);
         } else {
-            message.put("message", "Unable to register.");
-            return new ResponseEntity<>(message, HttpStatus.CONFLICT);
+            requestResponse.put("message", "Unable to register.");
+            return new ResponseEntity<>(requestResponse, HttpStatus.CONFLICT);
         }
     }
 
@@ -83,15 +79,6 @@ public class UserController {
         }
     }
 
-//    /**
-//     * Retrieves the profile of the currently logged-in user.
-//     * @return Profile object
-//     */
-//    @GetMapping(path="/profile/") //http://localhost:9092/auth/users/profile/
-//    public Profile getUserProfile(){
-//        return getCurrentLoggedInUser().getProfile();
-//    }
-//
     /**
      * Updates the user's profile, allowing for individual or multiple attribute changes.
      *
@@ -103,12 +90,12 @@ public class UserController {
         logger.info("Request to update user's profile");
         Optional<User> updatedUser = userService.updateUserProfile(profile);
         if(updatedUser.isPresent()){
-            message.put("message","Successful profile update!");
-            message.put("user", updatedUser.get());
-            return new ResponseEntity<>(message, HttpStatus.OK);
+            requestResponse.put("message","Successful profile update!");
+            requestResponse.put("user", updatedUser.get());
+            return new ResponseEntity<>(requestResponse, HttpStatus.OK);
         } else {
-            message.put("message","Profile update failed!");
-            return new ResponseEntity<>(message, HttpStatus.CONFLICT);
+            requestResponse.put("message","Profile update failed!");
+            return new ResponseEntity<>(requestResponse, HttpStatus.CONFLICT);
         }
 
     }
