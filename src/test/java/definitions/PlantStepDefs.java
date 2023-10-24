@@ -5,6 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
+import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -31,7 +32,8 @@ public class PlantStepDefs extends SetupTestDefs{
             JSONObject requestBody = new JSONObject();
             requestBody.put("name", name);
             requestBody.put("type", type);
-            response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/1/plants");
+            request.headers(createAuthenticatedHeader(token));
+            response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/1/plants/");
         } catch (Exception e) {
             log.severe("Something went wrong during plant creation. Error: " + e.getMessage());
         }
@@ -39,8 +41,12 @@ public class PlantStepDefs extends SetupTestDefs{
 
     @Then("the plant should be created successfully and added to the garden")
     public void thePlantShouldBeCreatedSuccessfullyAndAddedToTheGarden() {
-        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        log.info("the plant should be created successfully and added to the garden");
+        JsonPath jsonPath = response.jsonPath();
+        String message = jsonPath.get("message");
+        Object newPlant = jsonPath.get("data");
+        Assert.assertEquals(HttpStatus.CREATED.value(), response.getStatusCode());
+        log.info(message);
+        log.info(newPlant.toString());
     }
 
     @When("I create a plant with {string} or {string} missing")
