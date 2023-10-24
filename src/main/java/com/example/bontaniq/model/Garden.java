@@ -1,8 +1,11 @@
 package com.example.bontaniq.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name="gardens")
@@ -19,6 +22,10 @@ public class Garden {
     @ManyToOne //many gardens belong to a user
     @JoinColumn(name = "user_id") //to map the relationship
     private User user;
+
+    @OneToMany(mappedBy = "garden", orphanRemoval = true) //maps the relationship and removes plant data of garden is deleted
+    @LazyCollection(LazyCollectionOption.FALSE) // loads plants list when garden is loaded
+    private List<Plant> plantList;
 
     public Garden() {
     }
@@ -57,6 +64,14 @@ public class Garden {
         this.user = user;
     }
 
+    public List<Plant> getPlantList() {
+        return plantList;
+    }
+
+    public void setPlantList(List<Plant> plantList) {
+        this.plantList = plantList;
+    }
+
     @Override
     public String toString() {
         return "Garden{" +
@@ -64,6 +79,7 @@ public class Garden {
                 ", description='" + description + '\'' +
                 ", notes='" + notes + '\'' +
                 ", user=" + user +
+                ", plantList=" + plantList.toString() +
                 '}';
     }
 }
