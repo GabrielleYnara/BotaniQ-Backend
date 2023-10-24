@@ -106,13 +106,6 @@ public class GardenStepDefs extends SetupTestDefs{
         log.severe("Error message: " + message);
     }
 
-    @And("I have a garden with description {string} and notes {string}")
-    public void iHaveAGardenWithDescriptionAndNotes(String description, String notes) {
-        log.info("I have a garden with description " + description  + " and notes " + notes);
-        this.description = description;
-        this.notes = notes;
-    }
-
     @When("I update the description to {string} and the notes to {string}")
     public void iUpdateTheDescriptionToAndTheNotesTo(String description, String notes) {
         log.info("I update the description to " + description + " and the notes to " + notes);
@@ -132,19 +125,12 @@ public class GardenStepDefs extends SetupTestDefs{
             log.severe("Something went wrong when I attempt to update a garden.\n"
                     + "Error: " + e.getMessage());
         }
-
-    }
-
-    @And("the new information is different from the original")
-    public void theNewInformationIsDifferentFromTheOriginal() {
-        log.info("the new information is different from the original");
-        Assert.assertNotEquals(HttpStatus.CONFLICT, response.getStatusCode());
     }
 
     @Then("the garden should be updated successfully")
     public void theGardenShouldBeUpdatedSuccessfully() {
         log.info("the garden should be updated successfully");
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
     }
 
     @When("I update the garden with the same description and notes")
@@ -154,12 +140,8 @@ public class GardenStepDefs extends SetupTestDefs{
             RestAssured.baseURI = BASE_URL;
             RequestSpecification request = RestAssured.given();
             JSONObject requestBody = new JSONObject();
-            if (!description.isEmpty()){
-                requestBody.put("description", description);
-            }
-            if (!notes.isEmpty()){
-                requestBody.put("notes", notes);
-            }
+            requestBody.put("description", "Herb Vertical Garden");
+            requestBody.put("notes", "replace pots");
             request.headers(createAuthenticatedHeader(token));
             response = request.body(requestBody.toString()).put(BASE_URL + port + "/gardens/1/");
         } catch (Exception e){
@@ -184,7 +166,7 @@ public class GardenStepDefs extends SetupTestDefs{
 
     @Then("I should see a list of plants associated with the garden")
     public void iShouldSeeAListOfPlantsAssociatedWithTheGarden() {
-
+        //ToDo: Update to print plant list once model is implemented
         JsonPath jsonPath = response.jsonPath();
         String message = jsonPath.get("message");
         Object garden = jsonPath.get("data");
