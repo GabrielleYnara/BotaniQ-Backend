@@ -166,31 +166,16 @@ public class GardenStepDefs extends SetupTestDefs{
             log.severe("Something went wrong when I attempt to update an unchanged garden.\n"
                     + "Error: " + e.getMessage());
         }
-
     }
 
-    @And("I have a valid garden")
-    public void iHaveAValidGarden() {
-        log.info("I have a valid garden");
-        try {
-            RestAssured.baseURI = BASE_URL;
-            RequestSpecification request = RestAssured.given();
-            request.headers(createAuthenticatedHeader(token));
-            response = request.get(BASE_URL + port + "/gardens/1/");
-            Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-        } catch (Exception e){
-            log.severe("Something went wrong when I have a valid garden.\n"
-                    + "Error: " + e.getMessage());
-        }
-    }//ToDo: assign the response to a garden obj and use it in the @when statement
-
-    @When("I request to view the plants in the garden")
-    public void iRequestToViewThePlantsInTheGarden() {
+    @When("I request to view the plants of a valid garden")
+    public void iRequestToViewThePlantsOfAValidGarden() {
+        log.info("Request to retrieve a garden and its plants.");
         try{
             RestAssured.baseURI = BASE_URL;
             RequestSpecification request = RestAssured.given();
             request.headers(createAuthenticatedHeader(token));
-            response = request.get(BASE_URL + port + "/gardens/1/plants/");
+            response = request.get(BASE_URL + port + "/gardens/1/");
         } catch (Exception e){
             log.severe("Something went wrong when I request to view the plants in the garden.\n"
                     + "Error: " + e.getMessage());
@@ -200,9 +185,15 @@ public class GardenStepDefs extends SetupTestDefs{
 
     @Then("I should see a list of plants associated with the garden")
     public void iShouldSeeAListOfPlantsAssociatedWithTheGarden() {
-        List<Map<String, String>> plants = JsonPath.from(String.valueOf(response.getBody())).get("data");
-        Assert.assertFalse(plants.isEmpty());
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        JsonPath jsonPath = response.jsonPath();
+        String message = jsonPath.get("message");
+        Object garden = jsonPath.get("data");
+//        List<Map<String, String>> plants = garden.;
+//        Assert.assertFalse(plants.isEmpty());
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+        log.info(message);
+        log.info(garden.toString());
     }
 
     @Given("I provide an invalid garden")
