@@ -4,7 +4,6 @@ import com.example.bontaniq.model.Garden;
 import com.example.bontaniq.service.GardenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,9 +15,8 @@ import java.util.logging.Logger;
 
 @RestController
 @RequestMapping(path="/gardens") //http://localhost:9092/gardens
-public class GardenController extends SetupController{
+public class GardenController extends SharedResourceContainer {
     private final GardenService gardenService;
-    private Logger logger = Logger.getLogger(getClass().getName());
 
     @Autowired
     public GardenController(GardenService gardenService) {
