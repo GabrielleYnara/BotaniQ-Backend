@@ -101,10 +101,10 @@ public class UserStepDefs extends SetupTestDefs {
             RequestSpecification request = RestAssured.given();
             JSONObject requestBody = new JSONObject();
             if (!firstName.isEmpty()){
-                requestBody.put("first name", firstName);
+                requestBody.put("firstName", firstName);
             }
             if (!lastName.isEmpty()){
-                requestBody.put("last name", lastName);
+                requestBody.put("lastName", lastName);
             }
             if (!bio.isEmpty()) {
                 requestBody.put("bio", "Love gardening and caring for my fresh herbs");
@@ -198,7 +198,9 @@ public class UserStepDefs extends SetupTestDefs {
     public void theProfileIsUpdatedAndISeeASuccessMessage() {
         JsonPath jsonPath = response.jsonPath();
         String message = jsonPath.get("message");
+        Object updatedUser = jsonPath.get("user");
         log.info(message);
+        log.info(updatedUser.toString());
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
     }
 }
