@@ -180,7 +180,6 @@ public class GardenStepDefs extends SetupTestDefs{
             log.severe("Something went wrong when I request to view the plants in the garden.\n"
                     + "Error: " + e.getMessage());
         }
-
     }
 
     @Then("I should see a list of plants associated with the garden")
@@ -189,24 +188,30 @@ public class GardenStepDefs extends SetupTestDefs{
         JsonPath jsonPath = response.jsonPath();
         String message = jsonPath.get("message");
         Object garden = jsonPath.get("data");
-//        List<Map<String, String>> plants = garden.;
-//        Assert.assertFalse(plants.isEmpty());
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         log.info(message);
         log.info(garden.toString());
     }
 
-    @Given("I provide an invalid garden")
-    public void iProvideAnInvalidGarden() {
-        log.info("I provide an invalid garden");
+    @When("I request to view the plants of an invalid garden")
+    public void iRequestToViewThePlantsOfAnInvalidGarden() {
+        log.info("Request to retrieve an invalid garden.");
         try{
             RestAssured.baseURI = BASE_URL;
             RequestSpecification request = RestAssured.given();
             request.headers(createAuthenticatedHeader(token));
-            response = request.get(BASE_URL + port + "/gardens/invalid-garden/");
+            response = request.get(BASE_URL + port + "/gardens/-1/");
         } catch (Exception e){
             log.severe("Something went wrong when I provide an invalid garden.\n"
                     + "Error: " + e.getMessage());
         }
+    }
+
+    @Then("I should see a not found error message")
+    public void iShouldSeeANotFoundErrorMessage() {
+        JsonPath jsonPath = response.jsonPath();
+        String message = jsonPath.get("message");
+        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatusCode());
+        log.severe(message);
     }
 }
