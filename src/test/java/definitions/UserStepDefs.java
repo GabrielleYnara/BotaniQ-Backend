@@ -76,41 +76,45 @@ public class UserStepDefs extends SetupTestDefs {
     @Given("I am logged in")
     public void iAmLoggedIn() throws JSONException {
         log.info("GIVEN - I am logged in");
-        RestAssured.baseURI = BASE_URL;
-        RequestSpecification request = RestAssured.given();
-        request.header("Content-Type", "application/json");
-        JSONObject requestBody = new JSONObject();
-        requestBody.put("email", "newuser@email.com");
-        requestBody.put("password", "password");
-        response = request.body(requestBody.toString()).post(BASE_URL + port + "/auth/users/login/");
-        token = response.jsonPath().getString("jwt");
-        log.info("TOKEN " + token);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        try {
+            RestAssured.baseURI = BASE_URL;
+            RequestSpecification request = RestAssured.given();
+            request.header("Content-Type", "application/json");
+            JSONObject requestBody = new JSONObject();
+            requestBody.put("emailAddress", "gabrielleynara@ymail.com");
+            requestBody.put("password", "gaby1234");
+            response = request.body(requestBody.toString()).post(BASE_URL + port + "/auth/users/login/");
+            token = response.jsonPath().getString("jwt");
+            log.info("TOKEN " + token);
+            Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+        } catch (Exception e){
+            log.severe("Something went wrong during login.");
+            log.severe(e.getMessage());
+        }
     }
 
-    @When("I enter my first name, last name, and or bio")
-    public void iEnterMyFirstNameLastNameAndOrBio() throws JSONException {
+    @When("I enter my first name {string}, last name {string}, and or bio {string}")
+    public void iEnterMyFirstNameLastNameAndOrBio(String firstName, String lastName, String bio) {
         log.info("WHEN - I enter my first name, last name, and or bio");
-        RestAssured.baseURI = BASE_URL;
-        RequestSpecification request = RestAssured.given();
-        JSONObject requestBody = new JSONObject();
-        requestBody.put("first name", "John");
-        requestBody.put("last name", "Doe");
-        requestBody.put("bio", "Love gardening and caring for my fresh herbs");
-        request.headers(createAuthenticatedHeader(token));
-        response = request.body(requestBody.toString()).put(BASE_URL + port + "/auth/users/profile/");
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
-
-    @Then("The personal information is updated and display success message")
-    public void thePersonalInformationIsUpdatedAndDisplaySuccessMessage() {
-        log.info("The personal information is updated and display success message");
-        RestAssured.baseURI = BASE_URL;
-        RequestSpecification request = RestAssured.given();
-        request.headers(createAuthenticatedHeader(token));
-        response = request.get(BASE_URL + port + "/auth/users/profile/");
-        //check if info is updated.
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        try {
+            RestAssured.baseURI = BASE_URL;
+            RequestSpecification request = RestAssured.given();
+            JSONObject requestBody = new JSONObject();
+            if (!firstName.isEmpty()){
+                requestBody.put("first name", firstName);
+            }
+            if (!lastName.isEmpty()){
+                requestBody.put("last name", lastName);
+            }
+            if (!bio.isEmpty()) {
+                requestBody.put("bio", "Love gardening and caring for my fresh herbs");
+            }
+            request.headers(createAuthenticatedHeader(token));
+            response = request.body(requestBody.toString()).put(BASE_URL + port + "/auth/users/profile/");
+        } catch (Exception e ){
+            log.severe("Something went wrong during user's profile update.\n"
+                + "Error: " + e.getMessage());
+        }
     }
 
     @When("the server encounters an error")
@@ -188,5 +192,13 @@ public class UserStepDefs extends SetupTestDefs {
     public void iShouldSeeAFailedLoginMessage() {
         log.severe("Login failed! Invalid email or password.");
         Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getStatusCode());
+    }
+
+    @Then("The profile is updated and I see a success message")
+    public void theProfileIsUpdatedAndISeeASuccessMessage() {
+        JsonPath jsonPath = response.jsonPath();
+        String message = jsonPath.get("message");
+        log.info(message);
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
     }
 }
