@@ -69,9 +69,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if (StringUtils.hasLength(headerAuth) && headerAuth.startsWith("Bearer")){
             logger.info("A token has been extracted from the HTTP header");
             return headerAuth.substring(7);
+        } else {
+            logger.severe("Header not found, unsuccessful token extraction.");
+            return null;
         }
-        logger.severe("Header not found, unsuccessful token extraction.");
-        return null;
     }
 
     /**

@@ -1,7 +1,7 @@
 Feature: User Registration
 
   Scenario: Successful registration
-    When I enter a unique email and password
+    When I enter a unique email and additional user details
     Then I should see a success message
 
   Scenario: Registration with an already taken email

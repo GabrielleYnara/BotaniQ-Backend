@@ -1,7 +1,9 @@
 package com.example.bontaniq.controller;
 
+import com.example.bontaniq.model.Profile;
 import com.example.bontaniq.model.User;
 import com.example.bontaniq.model.request.LoginRequest;
+import com.example.bontaniq.model.request.UserRegistrationRequest;
 import com.example.bontaniq.model.response.LoginResponse;
 import com.example.bontaniq.security.MyUserDetails;
 import com.example.bontaniq.service.UserService;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -25,7 +28,8 @@ import java.util.logging.Logger;
 @RequestMapping(path = "/auth/users") //http://localhost:9092/auth/users
 public class UserController {
     private UserService userService;
-    private Logger logger = Logger.getLogger(UserController.class.getName());
+    private final Logger logger = Logger.getLogger(UserController.class.getName());
+    static HashMap<String, Object> message = new HashMap<>();
     /**
      * Injects dependencies and enables userController to access the resources
      * @param userService The Service responsible for user business logic.
@@ -35,26 +39,28 @@ public class UserController {
         this.userService = userService;
     }
 
-    /**
-     * Extracts user information from context holder
-     * @return Current logged in User object
-     */
-    public static User getCurrentLoggedInUser(){
-        MyUserDetails userDetails = (MyUserDetails) SecurityContextHolder //After jwt is generated, Security Context Holder is created to hold the user's state
-                .getContext().getAuthentication().getPrincipal(); // the entire User object, with authentication details
-        return userDetails.getUser();
-    }
+
 
     /**
      * Handles user registration by creating a new user.
      *
-     * @param user User object containing the information of the user to be registered.
+     * @param userRegistrationRequest userRegistrationRequest object containing user and its profile to be registered.
      * @return The newly created User object.
      */
     @PostMapping(path = "/register/") //http://localhost:9092/auth/users/register/
-    public User createUser(@RequestBody User user){
-//        return userService.createUser(user);
-        return user;
+    public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest userRegistrationRequest){
+        logger.info("Initiating User Registration.");
+        User user = userRegistrationRequest.getUser();
+        user.setProfile(userRegistrationRequest.getProfile());
+        User newUser = userService.registerUser(user);
+        if (newUser != null){
+            message.put("message", "Registration completed.");
+            message.put("data", newUser);
+            return new ResponseEntity<>(message, HttpStatus.CREATED);
+        } else {
+            message.put("message", "Unable to register.");
+            return new ResponseEntity<>(message, HttpStatus.CONFLICT);
+        }
     }
 
     /**
@@ -86,16 +92,24 @@ public class UserController {
 //        return getCurrentLoggedInUser().getProfile();
 //    }
 //
-//    /**
-//     * Updates the user's profile, allowing for individual or multiple attribute changes.
-//     *
-//     * @param profile Profile object with new details.
-//     * @return Updated profile.
-//     */
-//    @PutMapping(path="/profile/") //http://localhost:9092/auth/users/profile/
-//    public Profile updateUserProfile(@RequestBody Profile profile){
-//        User user = getCurrentLoggedInUser();
-//        user.setProfile(profile);
-//        return userService.updateUserProfile(user).getProfile();
-//    }
+    /**
+     * Updates the user's profile, allowing for individual or multiple attribute changes.
+     *
+     * @param profile Profile object with new details.
+     * @return Updated profile.
+     */
+    @PutMapping(path="/profile/") //http://localhost:9092/auth/users/profile/
+    public ResponseEntity<?> updateUserProfile(@RequestBody Profile profile) throws IllegalAccessException {
+        logger.info("Request to update user's profile");
+        Optional<User> updatedUser = userService.updateUserProfile(profile);
+        if(updatedUser.isPresent()){
+            message.put("message","Successful profile update!");
+            message.put("user", updatedUser.get());
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        } else {
+            message.put("message","Profile update failed!");
+            return new ResponseEntity<>(message, HttpStatus.CONFLICT);
+        }
+
+    }
 }
