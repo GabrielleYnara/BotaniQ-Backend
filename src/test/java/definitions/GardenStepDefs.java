@@ -10,10 +10,6 @@ import io.restassured.specification.RequestSpecification;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.parameters.P;
-
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -102,7 +98,7 @@ public class GardenStepDefs extends SetupTestDefs{
 
     @Then("I should see an error message {string}")
     public void iShouldSeeAnErrorMessage(String message) {
-        Assert.assertEquals(HttpStatus.CONFLICT.value(), response.getStatusCode());
+        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatusCode());
         log.severe("Error message: " + message);
     }
 

@@ -16,9 +16,9 @@ Feature: Create and Add Plant to a Garden
   Scenario Outline: Error when plant information is missing
     Given I have a valid garden
     When I create a plant with "<name>" or "<type>" missing
-    Then I should see an error message "Plant information is missing"
+    Then I should see a conflict error message "Plant information is missing"
 
     Examples:
-      | name  | type |
-      |       | Herb |
-      | Basil |      |
+      |  name   | type |
+      |         | Herb |
+      | Parsley |      |

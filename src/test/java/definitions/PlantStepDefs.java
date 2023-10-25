@@ -5,6 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
+import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -15,9 +16,9 @@ import java.util.logging.Logger;
 
 public class PlantStepDefs extends SetupTestDefs{
     private static final Logger log = Logger.getLogger(PlantStepDefs.class.getName());
-    private String name;
-    private String type;
-    private int plantId;
+
+    private String gardenId;
+    private String plantId;
     private String careTypeDescription;
     private String careTypeFrequency;
     private int careTypeId;
@@ -31,7 +32,8 @@ public class PlantStepDefs extends SetupTestDefs{
             JSONObject requestBody = new JSONObject();
             requestBody.put("name", name);
             requestBody.put("type", type);
-            response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/1/plants");
+            request.headers(createAuthenticatedHeader(token));
+            response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/" + gardenId + "/plants/");
         } catch (Exception e) {
             log.severe("Something went wrong during plant creation. Error: " + e.getMessage());
         }
@@ -39,8 +41,12 @@ public class PlantStepDefs extends SetupTestDefs{
 
     @Then("the plant should be created successfully and added to the garden")
     public void thePlantShouldBeCreatedSuccessfullyAndAddedToTheGarden() {
-        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        log.info("the plant should be created successfully and added to the garden");
+        JsonPath jsonPath = response.jsonPath();
+        String message = jsonPath.get("message");
+        Object newPlant = jsonPath.get("data");
+        Assert.assertEquals(HttpStatus.CREATED.value(), response.getStatusCode());
+        log.info(message);
+        log.info(newPlant.toString());
     }
 
     @When("I create a plant with {string} or {string} missing")
@@ -56,7 +62,8 @@ public class PlantStepDefs extends SetupTestDefs{
             if (!type.isEmpty()) {
                 requestBody.put("type", type);
             }
-            response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/1/plants");
+            request.headers(createAuthenticatedHeader(token));
+            response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/" + gardenId + "/plants/");
         } catch (Exception e) {
             log.severe("Something went wrong during plant creation with missing info. \nError: " + e.getMessage());
         }
@@ -65,7 +72,7 @@ public class PlantStepDefs extends SetupTestDefs{
     @Given("I provide a valid plant")
     public void iProvideAValidPlant() {
         log.info("I provide a valid plant");
-        this.plantId = 1;
+        this.plantId = "1";
     }
 
     @When("I request to view a singular plant in the garden")
@@ -83,13 +90,17 @@ public class PlantStepDefs extends SetupTestDefs{
 
     @Then("I should see the plants details")
     public void iShouldSeeThePlantsDetails() {
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-        log.info("I should see the plants details");
+        JsonPath jsonPath = response.jsonPath();
+        String message = jsonPath.get("message");
+        Object plant = jsonPath.get("data");
+        log.info(message);
+        log.info(plant.toString());
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
     }
 
     @Given("I provide an invalid plant")
     public void iProvideAnInvalidPlant() {
-        this.plantId = -1;
+        this.plantId = "-1";
     }
 
     @Given("I provide a {string} description for the care type")
@@ -122,12 +133,12 @@ public class PlantStepDefs extends SetupTestDefs{
 
     @Then("the application should save the care type and frequency")
     public void theApplicationShouldSaveTheCareTypeAndFrequency() {
-        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.CREATED.value(), response.getStatusCode());
     }
 
     @Then("the application should not save the care type")
     public void theApplicationShouldNotSaveTheCareType() {
-        Assert.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.CONFLICT.value(), response.getStatusCode());
     }
 
     @And("I provide a valid care type")
@@ -143,7 +154,7 @@ public class PlantStepDefs extends SetupTestDefs{
         } catch (Exception e){
             log.severe("Something went wrong while verifying a valid care.");
         }
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         log.info("The care type is valid.");
     }
 
@@ -170,7 +181,7 @@ public class PlantStepDefs extends SetupTestDefs{
 
     @Then("the application should save the care event")
     public void theApplicationShouldSaveTheCareEvent() {
-        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.CREATED.value(), response.getStatusCode());
     }
 
     @Given("The date care was administered is missing")
@@ -180,6 +191,22 @@ public class PlantStepDefs extends SetupTestDefs{
 
     @Then("the application should not save the care event")
     public void theApplicationShouldNotSaveTheCareEvent() {
-        Assert.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.CONFLICT.value(), response.getStatusCode());
+    }
+
+    @Given("I have a valid garden")
+    public void iHaveAValidGarden() {
+        gardenId = "1";
+    }
+
+    @Given("I provide an invalid garden")
+    public void iProvideAnInvalidGarden() {
+        gardenId = "-1";
+    }
+
+    @Then("I should see a conflict error message {string}")
+    public void iShouldSeeAConflictErrorMessage(String message) {
+        Assert.assertEquals(HttpStatus.CONFLICT.value(), response.getStatusCode());
+        log.severe("Error message: " + message);
     }
 }

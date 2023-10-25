@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping(path="/gardens") //http://localhost:9092/gardens
@@ -38,7 +37,7 @@ public class GardenController extends SharedResourceContainer {
     @GetMapping(path = "/{gardenId}/") //http://localhost:9092/gardens/1/
     public ResponseEntity<?> getGarden(@PathVariable(value = "gardenId") Long gardenId){
         logger.info("Attempt to retrieve a garden with id " + gardenId);
-        Optional<Garden> garden = gardenService.getGarden(gardenId);
+        Optional<Garden> garden = gardenService.getGardenById(gardenId);
         if (garden.isPresent()){
             requestResponse.put("message", "Garden retrieved successfully.");
             requestResponse.put("data", garden);

@@ -3,7 +3,6 @@ package com.example.bontaniq.service;
 import com.example.bontaniq.exception.exception.InformationExistException;
 import com.example.bontaniq.exception.exception.InformationNotFoundException;
 import com.example.bontaniq.model.Garden;
-import com.example.bontaniq.model.Profile;
 import com.example.bontaniq.model.User;
 import com.example.bontaniq.repository.GardenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,7 @@ public class GardenService {
             return Optional.of(gardenRepository.save(garden));
         }
     }
-    public Optional<Garden> getGarden(Long gardenId){
+    public Optional<Garden> getGardenById(Long gardenId){
         logger.info("Initializing retrieve garden:");
         User currentUser = userService.getCurrentLoggedInUser();
         Optional<Garden> gardenOptional = gardenRepository.findByIdAndUserId(gardenId, currentUser.getId());
