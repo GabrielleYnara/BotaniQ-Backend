@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CareTypeService extends ServiceSharedResources{
-    private CareTypeRepository careTypeRepository;
-    private PlantService plantService;
+    private final CareTypeRepository careTypeRepository;
+    private final PlantService plantService;
 
     @Autowired
     public CareTypeService(CareTypeRepository careTypeRepository, PlantService plantService) {
