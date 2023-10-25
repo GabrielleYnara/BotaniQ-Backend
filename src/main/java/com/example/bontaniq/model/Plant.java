@@ -22,7 +22,7 @@ public class Plant {
     @ManyToOne // many plants belongs to a garden
     @JoinColumn(name = "garden_id") // to map the relationship
     private Garden garden;
-    @OneToMany(mappedBy = "plant") // one plane can have many care types
+    @OneToMany(mappedBy = "plant", orphanRemoval = true) // one plane can have many care types
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<CareType> careTypeList;
 

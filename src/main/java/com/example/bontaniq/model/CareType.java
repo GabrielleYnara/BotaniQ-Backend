@@ -1,8 +1,11 @@
 package com.example.bontaniq.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "care_types")
@@ -19,6 +22,10 @@ public class CareType {
     @ManyToOne //many care types belong to a plant
     @JoinColumn(name="plant_id")
     private Plant plant;
+
+    @OneToMany(mappedBy = "careType", orphanRemoval = true) // one care type has many care trackers, removes care trackers if care type is deleted
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<CareTracker> careTrackerList;
 
     public CareType() {
     }
