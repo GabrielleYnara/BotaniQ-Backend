@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 @Entity
 @Table(name="care_tracker")
-public class CareTracker {
+public class CareTrack {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
@@ -21,10 +21,10 @@ public class CareTracker {
     @JoinColumn(name = "careType_id")
     private CareType careType;
 
-    public CareTracker() {
+    public CareTrack() {
     }
 
-    public CareTracker(boolean done, LocalDate date) {
+    public CareTrack(boolean done, LocalDate date) {
         this.done = done;
         this.date = date;
     }

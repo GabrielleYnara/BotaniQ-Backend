@@ -25,7 +25,7 @@ public class CareType {
 
     @OneToMany(mappedBy = "careType", orphanRemoval = true) // one care type has many care trackers, removes care trackers if care type is deleted
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<CareTracker> careTrackerList;
+    private List<CareTrack> careTrackList;
 
     public CareType() {
     }
@@ -63,6 +63,14 @@ public class CareType {
         this.plant = plant;
     }
 
+    public List<CareTrack> getCareTrackList() {
+        return careTrackList;
+    }
+
+    public void setCareTrackList(List<CareTrack> careTrackList) {
+        this.careTrackList = careTrackList;
+    }
+
     @Override
     public String toString() {
         return "CareType{" +
@@ -70,6 +78,7 @@ public class CareType {
                 ", type='" + type + '\'' +
                 ", frequency='" + frequency + '\'' +
                 ", plant=" + plant +
+                ", careTrackList=" + careTrackList +
                 '}';
     }
 }
