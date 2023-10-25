@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-import java.util.logging.Logger;
 
 /**
  * User Controller for handling user operations including authentication, registration, and profile management.
@@ -23,7 +22,7 @@ import java.util.logging.Logger;
  */
 @RestController
 @RequestMapping(path = "/auth/users") //http://localhost:9092/auth/users
-public class UserController extends SharedResourceContainer {
+public class UserController extends ControllerSharedResources {
     private UserService userService;
 
     /**

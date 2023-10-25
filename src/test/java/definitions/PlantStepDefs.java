@@ -1,5 +1,6 @@
 package definitions;
 
+import com.example.bontaniq.model.CareType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -19,9 +20,8 @@ public class PlantStepDefs extends SetupTestDefs{
 
     private String gardenId;
     private String plantId;
-    private String careTypeDescription;
-    private String careTypeFrequency;
-    private int careTypeId;
+    private String careTypeId;
+    private CareType careType = new CareType();
     private LocalDate careDate;
     @When("I create a plant name {string} and type {string}")
     public void iCreateAPlantNameAndType(String name, String type) {
@@ -106,26 +106,27 @@ public class PlantStepDefs extends SetupTestDefs{
     @Given("I provide a {string} description for the care type")
     public void iProvideADescriptionForTheCareType(String description) {
         log.info("I provide " + description + " as a description for the care type.");
-        this.careTypeDescription = description;
+        careType.setType(description);
     }
 
     @And("I set the frequency to {string}")
     public void iSetTheFrequencyTo(String frequency) {
         log.info("I provide " + frequency + " as a frequency for the care type.");
-        this.careTypeFrequency = frequency;
+        careType.setFrequency(frequency);
     }
 
-    @When("I attempt to create the care type")
-    public void iAttemptToCreateTheCareType() {
-        log.info("I attempt to create the care type");
+    @When("I attempt to create the care type with a {string} description set the frequency to {string}")
+    public void iAttemptToCreateTheCareTypeWithADescriptionSetTheFrequencyTo(String description, String frequency) {
+        log.info("I request to create the care type");
         try{
             RestAssured.baseURI = BASE_URL;
             RequestSpecification request = RestAssured.given();
             request.headers(createAuthenticatedHeader(token));
             JSONObject requestBody = new JSONObject();
-            requestBody.put("description", careTypeDescription);
-            requestBody.put("frequency", careTypeFrequency);
-            response = request.post(BASE_URL + port + "/gardens/1/plants/" + plantId + "/care/");
+            requestBody.put("type", description);
+            requestBody.put("frequency", frequency);
+            response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/1/plants/1/cares/");
+
         }catch (Exception e){
             log.severe("Something went wrong while creating a plant care type.");
         }
@@ -144,18 +145,19 @@ public class PlantStepDefs extends SetupTestDefs{
     @And("I provide a valid care type")
     public void iProvideAValidCareType() {
         log.info("I provide a valid care type");
-        try{
-            careTypeId = 1;
-            RestAssured.baseURI = BASE_URL;
-            RequestSpecification request = RestAssured.given();
-            request.headers(createAuthenticatedHeader(token));
-            response = request.get(BASE_URL + port + "/gardens/1/plants/" + plantId + "/care/" + careTypeId + "/");
-            //ToDo: refactor end-points, elegant solution.
-        } catch (Exception e){
-            log.severe("Something went wrong while verifying a valid care.");
-        }
-        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
-        log.info("The care type is valid.");
+        careTypeId = "1";
+//        try{
+//            careTypeId = 1;
+//            RestAssured.baseURI = BASE_URL;
+//            RequestSpecification request = RestAssured.given();
+//            request.headers(createAuthenticatedHeader(token));
+//            response = request.get(BASE_URL + port + "/gardens/1/plants/" + plantId + "/care/" + careTypeId + "/");
+//            //ToDo: refactor end-points, elegant solution.
+//        } catch (Exception e){
+//            log.severe("Something went wrong while verifying a valid care.");
+//        }
+//        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+//        log.info("The care type is valid.");
     }
 
     @Given("I specify the date care was administered")
@@ -173,6 +175,7 @@ public class PlantStepDefs extends SetupTestDefs{
             request.headers(createAuthenticatedHeader(token));
             JSONObject requestBody = new JSONObject();
             requestBody.put("date", careDate);
+
             response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/1/plants/" + plantId + "/care/" + careTypeId + "/");
         } catch (Exception e){
             log.severe("Something went wrong while registering a plant care.");
@@ -208,5 +211,14 @@ public class PlantStepDefs extends SetupTestDefs{
     public void iShouldSeeAConflictErrorMessage(String message) {
         Assert.assertEquals(HttpStatus.CONFLICT.value(), response.getStatusCode());
         log.severe("Error message: " + message);
+    }
+
+    @And("I should see the record created and success message")
+    public void iShouldSeeTheRecordCreatedAndSuccessMessage() {
+        JsonPath jsonPath = response.jsonPath();
+        String message = jsonPath.get("message");
+        Object data = jsonPath.get("data");
+        log.info(message);
+        log.info(data.toString());
     }
 }

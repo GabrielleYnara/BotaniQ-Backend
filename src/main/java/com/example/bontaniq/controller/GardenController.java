@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path="/gardens") //http://localhost:9092/gardens
-public class GardenController extends SharedResourceContainer {
+public class GardenController extends ControllerSharedResources {
     private final GardenService gardenService;
 
     @Autowired

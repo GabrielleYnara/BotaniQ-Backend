@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping(path="/gardens/{gardenId}/plants") // localhost:9092/gardens/{gardenId}/plants
-public class PlantController extends SharedResourceContainer{
+public class PlantController extends ControllerSharedResources {
     private final PlantService plantService;
 
     @Autowired
@@ -21,7 +21,7 @@ public class PlantController extends SharedResourceContainer{
     }
 
     @PostMapping(path = "/") //http://localhost:9092/gardens/{gardenId}/plants/
-    public ResponseEntity<?> createGarden(@RequestBody Plant plant, @PathVariable(value = "gardenId") Long gardenId){
+    public ResponseEntity<?> createPlant(@RequestBody Plant plant, @PathVariable(value = "gardenId") Long gardenId){
         logger.info("Attempt to create a new Plant.");
         Optional<Plant> newPlant = plantService.createPlant(plant, gardenId);
         if (newPlant.isPresent()){
