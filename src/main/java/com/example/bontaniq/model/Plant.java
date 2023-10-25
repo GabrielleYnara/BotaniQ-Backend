@@ -63,6 +63,14 @@ public class Plant {
         this.garden = garden;
     }
 
+    public List<CareType> getCareTypeList() {
+        return careTypeList;
+    }
+
+    public void setCareTypeList(List<CareType> careTypeList) {
+        this.careTypeList = careTypeList;
+    }
+
     @Override
     public String toString() {
         return "Plant{" +
