@@ -90,8 +90,12 @@ public class PlantStepDefs extends SetupTestDefs{
 
     @Then("I should see the plants details")
     public void iShouldSeeThePlantsDetails() {
+        JsonPath jsonPath = response.jsonPath();
+        String message = jsonPath.get("message");
+        Object plant = jsonPath.get("data");
+        log.info(message);
+        log.info(plant.toString());
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
-        log.info("I should see the plants details");
     }
 
     @Given("I provide an invalid plant")
