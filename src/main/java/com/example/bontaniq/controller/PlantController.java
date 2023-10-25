@@ -21,7 +21,7 @@ public class PlantController extends ControllerSharedResources {
     }
 
     @PostMapping(path = "/") //http://localhost:9092/gardens/{gardenId}/plants/
-    public ResponseEntity<?> createGarden(@RequestBody Plant plant, @PathVariable(value = "gardenId") Long gardenId){
+    public ResponseEntity<?> createPlant(@RequestBody Plant plant, @PathVariable(value = "gardenId") Long gardenId){
         logger.info("Attempt to create a new Plant.");
         Optional<Plant> newPlant = plantService.createPlant(plant, gardenId);
         if (newPlant.isPresent()){
