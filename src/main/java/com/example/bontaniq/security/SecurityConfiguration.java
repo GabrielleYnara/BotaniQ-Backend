@@ -53,7 +53,8 @@ public class SecurityConfiguration {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) //every time will check for jwt token, not session based.
                 .and().csrf().disable()
                 .headers().frameOptions().disable();
-        http.addFilterBefore(authJwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.cors(); // Enable CORS (Cross-Origin Resource Sharing)
+        http.addFilterBefore(authJwtRequestFilter(), UsernamePasswordAuthenticationFilter.class); // Add JWT filter
         return http.build();
     }
 
