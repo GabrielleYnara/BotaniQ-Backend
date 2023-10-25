@@ -25,6 +25,12 @@ public class CareTypeService extends ServiceSharedResources{
         logger.info("Initializing create plant care type: ");
         Optional<Plant> plantOptional = plantService.getPlantById(plantId, gardenId);
         if(plantOptional.isPresent()){
+            Optional<CareType> careTypeOptional = careTypeRepository.findByTypeAndPlantId(careType.getType(), plantId);
+            if (careTypeOptional.isPresent()){
+                String message = "Care Type " + careType.getType() + " already exist.";
+                logger.severe(message);
+                return Optional.empty();
+            }
             careType.setPlant(plantOptional.get());
             if (careType.getType() != null && careType.getFrequency() != null) {
                 logger.info("Care Type created!");
