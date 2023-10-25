@@ -22,7 +22,7 @@ public class PlantStepDefs extends SetupTestDefs{
     private String plantId;
     private String careTypeId;
     private CareType careType = new CareType();
-    private LocalDate careDate;
+    private static LocalDate careDate;
     @When("I create a plant name {string} and type {string}")
     public void iCreateAPlantNameAndType(String name, String type) {
         log.info("I create a plant name " + name + " and type " + type);
@@ -162,7 +162,7 @@ public class PlantStepDefs extends SetupTestDefs{
 
     @Given("I specify the date care was administered")
     public void iSpecifyTheDateCareWasAdministered() {
-        this.careDate = LocalDate.parse("2023-10-21");
+        careDate = LocalDate.now();
         log.info("I specify the date care was administered");
     }
 
@@ -175,8 +175,8 @@ public class PlantStepDefs extends SetupTestDefs{
             request.headers(createAuthenticatedHeader(token));
             JSONObject requestBody = new JSONObject();
             requestBody.put("date", careDate);
-
-            response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/1/plants/" + plantId + "/care/" + careTypeId + "/");
+            requestBody.put("done", true);
+            response = request.body(requestBody.toString()).post(BASE_URL + port + "/gardens/1/plants/1/cares/1/care-tracker/");
         } catch (Exception e){
             log.severe("Something went wrong while registering a plant care.");
         }
@@ -189,7 +189,7 @@ public class PlantStepDefs extends SetupTestDefs{
 
     @Given("The date care was administered is missing")
     public void theDateCareWasAdministeredIsMissing() {
-        this.careDate = null;
+        careDate = null;
     }
 
     @Then("the application should not save the care event")
