@@ -8,6 +8,8 @@ import com.example.bontaniq.repository.PlantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -37,4 +39,21 @@ public class PlantService extends ServiceSharedResources{
             throw new InformationNotFoundException("Garden not found! Can't create a plant without a garden.");
         }
     }
+
+    public Optional<Plant> getPlantById(Long plantId, Long gardenId){
+        logger.info("Initializing retrieve plant by id.");
+        Optional<Garden> garden = gardenService.getGardenById(gardenId);
+
+        if (garden.isPresent()){
+            List<Plant> plantList = garden.get().getPlantList();
+            Plant plantFound = plantList.stream().filter((plant) -> Objects.equals(plant.getId(), plantId)).toList().get(0);
+            logger.info(plantFound.getName() + " found.");
+            return Optional.of(plantFound);
+        } else {
+            String message = "Garden not found, can't keep searching for plant.";
+            logger.severe(message);
+            throw new InformationNotFoundException(message);
+        }
+    }
+
 }
