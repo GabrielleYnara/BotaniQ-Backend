@@ -18,7 +18,7 @@ public class PlantStepDefs extends SetupTestDefs{
     private static final Logger log = Logger.getLogger(PlantStepDefs.class.getName());
 
     private String gardenId;
-    private int plantId;
+    private String plantId;
     private String careTypeDescription;
     private String careTypeFrequency;
     private int careTypeId;
@@ -72,7 +72,7 @@ public class PlantStepDefs extends SetupTestDefs{
     @Given("I provide a valid plant")
     public void iProvideAValidPlant() {
         log.info("I provide a valid plant");
-        this.plantId = 1;
+        this.plantId = "1";
     }
 
     @When("I request to view a singular plant in the garden")
@@ -100,7 +100,7 @@ public class PlantStepDefs extends SetupTestDefs{
 
     @Given("I provide an invalid plant")
     public void iProvideAnInvalidPlant() {
-        this.plantId = -1;
+        this.plantId = "-1";
     }
 
     @Given("I provide a {string} description for the care type")

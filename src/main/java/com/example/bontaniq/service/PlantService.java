@@ -46,9 +46,15 @@ public class PlantService extends ServiceSharedResources{
 
         if (garden.isPresent()){
             List<Plant> plantList = garden.get().getPlantList();
-            Plant plantFound = plantList.stream().filter((plant) -> Objects.equals(plant.getId(), plantId)).toList().get(0);
-            logger.info(plantFound.getName() + " found.");
-            return Optional.of(plantFound);
+            Optional<Plant> plantFound = plantList.stream().filter((plant) -> Objects.equals(plant.getId(), plantId)).findFirst();
+            if (plantFound.isPresent()) {
+                logger.info("Found " + plantFound.get().getName());
+                return plantFound;
+            } else {
+                String message = "Plant not found.";
+                logger.severe(message);
+                throw new InformationNotFoundException(message);
+            }
         } else {
             String message = "Garden not found, can't keep searching for plant.";
             logger.severe(message);
