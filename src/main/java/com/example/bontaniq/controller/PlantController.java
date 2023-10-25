@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping(path="/gardens/{gardenId}/plants") // localhost:9092/gardens/{gardenId}/plants
-public class PlantController extends SharedResourceContainer{
+public class PlantController extends ControllerSharedResources {
     private final PlantService plantService;
 
     @Autowired
