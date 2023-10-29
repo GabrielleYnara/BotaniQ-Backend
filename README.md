@@ -1,3 +1,4 @@
+> **Tip:** Use the dropdown menu next to 'README' above to navigate through different sections of this document. ![Screen Shot](https://github.com/GabrielleYnara/BotaniQ-Backend/blob/main/assets/readme%20dropdown
 # BotaniQ Backend
 Your virtual companion for nurturing and managing your garden's growth, with a robust BotaniQ Backend.  
 This core component handles data management, logic, and server operations, ensuring a seamless user experience as you interact with your virtual garden.
@@ -6,6 +7,14 @@ This core component handles data management, logic, and server operations, ensur
 #
 > <p align="center">:construction: This project is currently under construction :construction:</p>
 
+### Approach 
+- **Initial Planning**: Created a Trello board for project management and drafted an Entity Relation Diagram and User Stories.  
+- **Task Breakdown**: Turned User Stories into features on Trello cards.  
+- **Repo Setup and Development**: Created a GitHub repository, cloned it locally, wrote test units with Cucumber and Rest Assured following Test Driven Development (TDD), followed by security implementation JWT-based authentication.  
+Then implemented the backend feature-based, following Spring MVC architecture and ensuring a functional application.  
+Once the backend was done, I moved to the front-end repository and implemented the View feature-based, ensuring a seamless application.  
+- **Testing**: After each feature is implemented on the back end, I would refactor the test if necessary. 
+  
 ### User Stories
 <details>
 <summary>User-related</summary>
@@ -67,7 +76,7 @@ This core component handles data management, logic, and server operations, ensur
 
 ### Endpoints 
 | Entity | Request Type | URL | Functionality | Access |
-| --- | --- | --- | --- | --- |
+| --- | --- | --- | ---- | --- |
 | User | POST | /auth/users/register/ | Register a new user | public |
 | User | POST | /auth/users/login/ | Login as a registered user | public |
 | User | PUT | /auth/users/profile/ | Update a user's profile | private |
@@ -80,14 +89,25 @@ This core component handles data management, logic, and server operations, ensur
 | Care Tracker | POST | /gardens/{gardenId}/plants/{plantId}/cares/{careId}/care-tracker/ | Register plant care | private |
 
 ### Project Resources
-
 You can find the **Entity Relationship Diagram (ERD)** [here](https://github.com/GabrielleYnara/BotaniQ-Backend/blob/main/assets/BotaniQ%20-%20ERD.png).  
 You can view the **Wireframe** [here](https://www.figma.com/file/XPuSCSOH2gortY4YzDjYnY/BotaniQ?type=design&node-id=1%3A153&mode=design&t=sEdhlr8fbDFwkS11-1).  
 You can track the project's progress on **Trello** [here](https://trello.com/b/Phjbksmc/capstone).
 
+### Roadblocks
+**Cucumber & Rest Assured Confusion**: I found myself questioning every step of the way, doubting the effectiveness of the tests I was writing. I went back to Cucumber's documentation and read it until I felt more confident and finally ready to move on.  
+**Time Estimate**: Unfortunately I miscalculated the time necessary for each task and ended up fighting the clock at the end to present basic functionalities. 
+
+### Future Enhancements
+**Implement full CRUD**: Enable full Create, Read, Update, and Delete (CRUD)  functionality for managing profile, garden, plants, and care information, so users can have better control over their data.  
+**Third-party API for plant care recommendations**: Adding a layer of intelligence, enhancing the virtual companion aspect of BotaniQ.  
+**Improve User Interface and Experience**: Adopt mobile-first design to improve accessibility, and enhance user interaction by including error prompts, tooltips, and a more intuitive interface, reducing confusion and providing an overall better user experience.
+
 ### Acknowledgments
-This project was developed as part of the Software Engineering Immersive program by General Assembly. 
+This project was developed as part of the Software Engineering Immersive program by General Assembly.  
 It serves as a capstone project to apply and reinforce skills in Java, Object-Oriented Programming, Spring Boot, Spring Security, and TDD (Test-Driven Development). 
+
+### Feedback
+If you have any questions, suggestions, or encounter a bug, feel free to [create an issue ticket](https://github.com/GabrielleYnara/BotaniQ-Backend/issues/new) to let me know.
 
 ### Tools and Technologies
 - Backend Framework: Spring Boot
@@ -109,7 +129,9 @@ It serves as a capstone project to apply and reinforce skills in Java, Object-Or
 
 1. **Clone the Repository**  
   Clone the repository to your local machine  
-2. **Replace the application.properties file**
+2. **Replace the application.properties file**  
+  Open the src/main/resources/application.properties file.
+  Replace the placeholder values with your own configurations:
 ```
 server.port= {YOUR_PORT}
 spring.datasource.url=jdbc:h2:mem:botaniqdb
