@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -44,6 +45,21 @@ public class GardenController extends ControllerSharedResources {
             return new ResponseEntity<>(requestResponse, HttpStatus.OK);
         } else {
             requestResponse.put("message", "Garden not found!");
+            logger.severe(requestResponse.get("message").toString());
+            return new ResponseEntity<>(requestResponse, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping(path = "/") //http://localhost:9092/gardens/
+    public ResponseEntity<?> getAllGardens(){
+        logger.info("Attempt to retrieve a garden list.");
+        List<Garden> gardenList = gardenService.getAllGarden();
+        if (!gardenList.isEmpty()){
+            requestResponse.put("message", "Garden list retrieved successfully.");
+            requestResponse.put("data", gardenList);
+            return new ResponseEntity<>(requestResponse, HttpStatus.OK);
+        } else {
+            requestResponse.put("message", "Garden list empty!");
             logger.severe(requestResponse.get("message").toString());
             return new ResponseEntity<>(requestResponse, HttpStatus.NOT_FOUND);
         }

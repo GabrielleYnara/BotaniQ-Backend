@@ -4,6 +4,7 @@ import com.example.bontaniq.model.Garden;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -14,4 +15,5 @@ import java.util.Optional;
 public interface GardenRepository extends JpaRepository<Garden, Long> { // Entity and id data type
     Optional<Garden> findByDescriptionAndUserId(String description, Long userId);
     Optional<Garden> findByIdAndUserId(Long gardenId, Long userId);
+    List<Garden> findAllByUserId(Long userId);
 }

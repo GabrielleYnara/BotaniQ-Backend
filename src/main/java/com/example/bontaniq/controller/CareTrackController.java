@@ -19,7 +19,7 @@ public class CareTrackController extends ControllerSharedResources{
         this.careTrackService = careTrackService;
     }
 
-    @PostMapping(path = "/") //http://localhost:9092/gardens/{gardenId}/plants/{plantId}/cares/
+    @PostMapping(path = "/") //http://localhost:9092/gardens/{gardenId}/plants/{plantId}/cares/{careId}/care-tracker/
     public ResponseEntity<?> registerCareTrack(@PathVariable(value = "gardenId") Long gardenId, @PathVariable(value = "plantId") Long plantId, @PathVariable(value = "careId") Long careTypeId, @RequestBody CareTrack careTrack){
         logger.info("Attempt to create a new Care Track.");
         Optional<CareTrack> newCareTrack = careTrackService.registerCareTrack(gardenId, plantId, careTypeId, careTrack);

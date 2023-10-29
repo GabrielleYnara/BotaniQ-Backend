@@ -2,13 +2,12 @@ package com.example.bontaniq.service;
 
 import com.example.bontaniq.exception.exception.IllegalArgumentException;
 import com.example.bontaniq.exception.exception.InformationNotFoundException;
-import com.example.bontaniq.model.CareTrack;
-import com.example.bontaniq.model.CareType;
-import com.example.bontaniq.model.Plant;
+import com.example.bontaniq.model.*;
 import com.example.bontaniq.repository.CareTrackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -52,4 +51,16 @@ public class CareTrackService extends ServiceSharedResources{
     //search care type
     //save care track
 
+    public List<Object[]> getAllTracksBy(Long plantId){
+        logger.info("Initializing retrieve all gardens:");
+        List<Object[]> plantCareTracker = careTrackRepository.findCareTrackDetailsByPlantId(plantId);
+        if (!plantCareTracker.isEmpty()){
+            logger.info("Plant care tracker found.");
+            return plantCareTracker;
+        } else {
+            String message = "Plant care tracker empty.";
+            logger.severe(message);
+            throw new InformationNotFoundException(message);
+        }
+    }
 }

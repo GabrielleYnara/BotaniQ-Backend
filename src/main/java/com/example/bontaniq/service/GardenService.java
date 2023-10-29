@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -49,6 +50,20 @@ public class GardenService {
         } else {
             logger.severe("Garden with id " + gardenId + " not found.");
             throw new InformationNotFoundException("Garden with id " + gardenId + " not found.");
+        }
+    }
+
+    public List<Garden> getAllGarden(){
+        logger.info("Initializing retrieve all gardens:");
+        User currentUser = userService.getCurrentLoggedInUser();
+        List<Garden> gardenList = gardenRepository.findAllByUserId(currentUser.getId());
+        if (!gardenList.isEmpty()){
+            logger.info("Garden list found.");
+            return gardenList;
+        } else {
+            String message = "Garden list empty.";
+            logger.severe(message);
+            throw new InformationNotFoundException(message);
         }
     }
 

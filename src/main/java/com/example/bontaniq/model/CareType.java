@@ -14,7 +14,7 @@ public class CareType {
     @GeneratedValue(strategy = GenerationType.IDENTITY) //generate sequence of unused values
     @Column
     private Long id;
-    @Column(unique = true) //database persistence
+    @Column //database persistence
     private String type;
     @Column
     private String frequency;

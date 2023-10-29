@@ -8,6 +8,7 @@ import com.example.bontaniq.repository.CareTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,6 +41,24 @@ public class CareTypeService extends ServiceSharedResources{
             }
         } else {
             throw new InformationNotFoundException("Plant not found! Can't create a care type without a plant.");
+        }
+    }
+
+    public List<CareType> getAllCareTypesByPlantId(Long gardenId, Long plantId){
+        logger.info("Initializing retrieve all Care Types for Plant with id " + plantId);
+        Optional<Plant> plantOptional = plantService.getPlantById(plantId, gardenId);
+        if(plantOptional.isPresent()){
+            List<CareType> careTypeList = careTypeRepository.findByPlantId(plantId);
+            if (!careTypeList.isEmpty()){
+                logger.info("A list of care found." + careTypeList);
+                return careTypeList;
+            } else {
+                String message = "No care type registered for plant " + plantOptional.get().getName();
+                logger.severe(message);
+                throw new InformationNotFoundException(message);
+            }
+        } else {
+            throw new InformationNotFoundException("Plant not found! Can't keep searching for care needs.");
         }
     }
 }

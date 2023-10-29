@@ -69,9 +69,11 @@ public class UserController extends ControllerSharedResources {
     public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest loginRequest) {
         logger.info("User attempt to login.");
         Optional<String> jwtToken = userService.loginUser(loginRequest);
+
         if (jwtToken.isPresent()){
+            LoginResponse loginResponse = new LoginResponse(jwtToken.get(), userService.getCurrentLoggedInUser());
             logger.info("User Authenticated.");
-            return ResponseEntity.ok(new LoginResponse(jwtToken.get()));
+            return ResponseEntity.ok(loginResponse);
         } else {
             logger.severe("Authentication failed!");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("Authentication failed!"));
