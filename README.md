@@ -10,7 +10,7 @@ This core component handles data management, logic, and server operations, ensur
 ### Approach 
 - **Initial Planning**: Created a Trello board for project management and drafted an Entity Relation Diagram and User Stories.  
 - **Task Breakdown**: Turned User Stories into features on Trello cards.  
-- **Repo Setup and Development**: Created a GitHub repository, cloned it locally, wrote test units with Cucumber and Rest Assured following Test Driven Development (TDD), followed by security implementation JWT-based authentication.  
+- **Repo Setup and Development**: Created a GitHub repository, cloned it locally, wrote test units with Cucumber and Rest Assured following Test Driven Development (TDD), followed by implementing JWT-based authentication for security.  
 Then implemented the backend feature-based, following Spring MVC architecture and ensuring a functional application.  
 Once the backend was done, I moved to the front-end repository and implemented the View feature-based, ensuring a seamless application.  
 - **Testing**: After each feature is implemented on the back end, I would refactor the test if necessary. 
@@ -94,11 +94,11 @@ You can view the **Wireframe** [here](https://www.figma.com/file/XPuSCSOH2gortY4
 You can track the project's progress on **Trello** [here](https://trello.com/b/Phjbksmc/capstone).
 
 ### Roadblocks
-**Cucumber & Rest Assured Confusion**: I found myself questioning every step of the way, doubting the effectiveness of the tests I was writing. I went back to Cucumber's documentation and read it until I felt more confident and finally ready to move on.  
-**Time Estimate**: Unfortunately I miscalculated the time necessary for each task and ended up fighting the clock at the end to present basic functionalities. 
+**Cucumber & Rest Assured Confusion**: I found myself questioning the effectiveness of the tests I was writing every step of the way. I went back to Cucumber's documentation and read it until I felt more confident and finally ready to move on.  
+**Time Estimate**: Unfortunately, I miscalculated the time necessary for each task and ended up fighting the clock to present basic functionalities. 
 
 ### Future Enhancements
-**Implement full CRUD**: Enable full Create, Read, Update, and Delete (CRUD)  functionality for managing profile, garden, plants, and care information, so users can have better control over their data.  
+**Implement full CRUD**: Enable full CRUD (Create, Read, Update, Delete) functionality for better data management across profiles, gardens, plants, and care information.  
 **Third-party API for plant care recommendations**: Adding a layer of intelligence, enhancing the virtual companion aspect of BotaniQ.  
 **Improve User Interface and Experience**: Adopt mobile-first design to improve accessibility, and enhance user interaction by including error prompts, tooltips, and a more intuitive interface, reducing confusion and providing an overall better user experience.
 
@@ -130,7 +130,7 @@ If you have any questions, suggestions, or encounter a bug, feel free to [create
 1. **Clone the Repository**  
   Clone the repository to your local machine  
 2. **Replace the application.properties file**  
-  Open the src/main/resources/application.properties file.
+  Open the src/main/resources/application.properties file.  
   Replace the placeholder values with your own configurations:
 ```
 server.port= {YOUR_PORT}
@@ -148,3 +148,6 @@ server.error.include-stacktrace=never
 jwt-secret="{YOUR_SECRET_KEY}"
 jwt-expiration-ms=86400000
 ```
+---
+
+[Back to Top](#botaniq-backend)
