@@ -1,4 +1,4 @@
-> **Tip:** Use the dropdown menu next to 'README' above to navigate through different sections of this document. ![Screen Shot](https://github.com/GabrielleYnara/BotaniQ-Backend/blob/main/assets/readme%20dropdown
+> **Tip:** Use the dropdown menu next to 'README' above to navigate through different sections of this document. <img src="https://github.com/GabrielleYnara/BotaniQ-Backend/blob/main/assets/readme%20dropdown.png" width="100">
 # BotaniQ Backend
 Your virtual companion for nurturing and managing your garden's growth, with a robust BotaniQ Backend.  
 This core component handles data management, logic, and server operations, ensuring a seamless user experience as you interact with your virtual garden.
