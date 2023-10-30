@@ -45,11 +45,7 @@ public class CareTrackService extends ServiceSharedResources{
             return Optional.empty();
         }
 
-    } //ToDo: once the caretype get method is implemented, update this.
-    //search garden
-    //search plant
-    //search care type
-    //save care track
+    }
 
     public List<Object[]> getAllTracksBy(Long plantId){
         logger.info("Initializing retrieve all gardens:");
