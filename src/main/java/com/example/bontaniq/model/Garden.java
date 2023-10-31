@@ -40,7 +40,7 @@ public class Garden {
      * </p>
      */
     @JsonIgnore // to prevent stack overflow
-    @ManyToOne //many gardens belong to a user
+    @ManyToOne
     @JoinColumn(name = "user_id") //to map the relationship
     private User user;
     /**
@@ -49,7 +49,7 @@ public class Garden {
      * If a garden is deleted, all its associated plants are removed as well.
      * </p>
      */
-    @OneToMany(mappedBy = "garden", orphanRemoval = true) //maps the relationship and removes plant data of garden is deleted
+    @OneToMany(mappedBy = "garden", orphanRemoval = true) //maps the relationship
     @LazyCollection(LazyCollectionOption.FALSE) // loads plants list when garden is loaded
     private List<Plant> plantList;
 
