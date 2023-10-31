@@ -11,23 +11,19 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @Service
-public class GardenService {
+public class GardenService extends ServiceSharedResources{
     private final GardenRepository gardenRepository;
-    private final UserService userService;
-    private Logger logger = Logger.getLogger(GardenRepository.class.getName());
 
     @Autowired
-    public GardenService(GardenRepository gardenRepository, UserService userService) {
+    public GardenService(GardenRepository gardenRepository) {
         this.gardenRepository = gardenRepository;
-        this.userService = userService;
     }
 
     public Optional<Garden> createGarden(Garden garden){
         logger.info("Initializing garden creation:");
-        User currentUser = userService.getCurrentLoggedInUser();
+        User currentUser = getCurrentLoggedInUser();
         // check if a garden with description already exists
         Optional<Garden> gardenOptional = gardenRepository.findByDescriptionAndUserId(garden.getDescription(), currentUser.getId());
         // if it does, returns error
@@ -42,7 +38,7 @@ public class GardenService {
     }
     public Optional<Garden> getGardenById(Long gardenId){
         logger.info("Initializing retrieve garden:");
-        User currentUser = userService.getCurrentLoggedInUser();
+        User currentUser = getCurrentLoggedInUser();
         Optional<Garden> gardenOptional = gardenRepository.findByIdAndUserId(gardenId, currentUser.getId());
         if (gardenOptional.isPresent()){
             logger.info("Garden " + gardenOptional.get().getDescription() + " found.");
@@ -55,7 +51,7 @@ public class GardenService {
 
     public List<Garden> getAllGarden(){
         logger.info("Initializing retrieve all gardens:");
-        User currentUser = userService.getCurrentLoggedInUser();
+        User currentUser = getCurrentLoggedInUser();
         List<Garden> gardenList = gardenRepository.findAllByUserId(currentUser.getId());
         if (!gardenList.isEmpty()){
             logger.info("Garden list found.");
@@ -69,7 +65,7 @@ public class GardenService {
 
     public Optional<Garden> updateGarden(Garden garden, Long gardenId) throws IllegalAccessException {
         logger.info("Initializing garden update");
-        User user = userService.getCurrentLoggedInUser();
+        User user = getCurrentLoggedInUser();
         Optional<Garden> originalGarden = gardenRepository.findByIdAndUserId(gardenId, user.getId());
         if (originalGarden.isPresent()){
             logger.info("Garden record found.");
