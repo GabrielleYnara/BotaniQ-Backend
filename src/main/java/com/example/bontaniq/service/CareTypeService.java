@@ -1,7 +1,7 @@
 package com.example.bontaniq.service;
 
-import com.example.bontaniq.exception.exception.IllegalArgumentException;
-import com.example.bontaniq.exception.exception.InformationNotFoundException;
+import com.example.bontaniq.exception.IllegalArgumentException;
+import com.example.bontaniq.exception.InformationNotFoundException;
 import com.example.bontaniq.model.CareType;
 import com.example.bontaniq.model.Plant;
 import com.example.bontaniq.repository.CareTypeRepository;

@@ -1,7 +1,7 @@
 package com.example.bontaniq.service;
 
-import com.example.bontaniq.exception.exception.InformationExistException;
-import com.example.bontaniq.exception.exception.InformationNotFoundException;
+import com.example.bontaniq.exception.InformationExistException;
+import com.example.bontaniq.exception.InformationNotFoundException;
 import com.example.bontaniq.model.Garden;
 import com.example.bontaniq.model.User;
 import com.example.bontaniq.repository.GardenRepository;

@@ -1,8 +1,8 @@
 package com.example.bontaniq.service;
 
 import com.example.bontaniq.controller.UserController;
-import com.example.bontaniq.exception.exception.InformationExistException;
-import com.example.bontaniq.exception.exception.InformationNotFoundException;
+import com.example.bontaniq.exception.InformationExistException;
+import com.example.bontaniq.exception.InformationNotFoundException;
 import com.example.bontaniq.model.Profile;
 import com.example.bontaniq.model.User;
 import com.example.bontaniq.model.request.LoginRequest;
@@ -20,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
-import java.time.LocalDate;
 import java.util.Optional;
 import java.util.logging.Logger;
 
