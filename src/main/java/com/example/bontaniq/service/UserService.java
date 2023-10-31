@@ -23,10 +23,11 @@ import java.util.Optional;
 
 /**
  * Represents the User Service, responsible for housing business logic related to users.<br>
- *
- * This class serves as an intermediary between the controller and the repository,
- * invoking the repository to perform CRUD operations on users.
- * */
+ *<p>
+ *     This class serves as an intermediary between the controller and the repository,
+ *     invoking the repository to perform CRUD operations on users.
+ *</p>
+ */
 @Service
 public class UserService extends ServiceSharedResources{
     private final UserRepository userRepository;

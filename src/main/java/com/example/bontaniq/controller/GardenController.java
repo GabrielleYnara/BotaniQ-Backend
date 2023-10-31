@@ -53,7 +53,7 @@ public class GardenController extends ControllerSharedResources {
     @GetMapping(path = "/") //http://localhost:9092/gardens/
     public ResponseEntity<?> getAllGardens(){
         logger.info("Attempt to retrieve a garden list.");
-        List<Garden> gardenList = gardenService.getAllGarden();
+        List<Garden> gardenList = gardenService.getAllGardens();
         if (!gardenList.isEmpty()){
             requestResponse.put("message", "Garden list retrieved successfully.");
             requestResponse.put("data", gardenList);
