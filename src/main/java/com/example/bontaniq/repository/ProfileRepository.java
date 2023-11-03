@@ -12,5 +12,11 @@ import java.util.Optional;
  *  */
 @Repository
 public interface ProfileRepository extends JpaRepository<Profile, Long> { //Entity, id data type
+    /**
+     * Searches a profile by its ID.
+     * @param profileId The profile unique id.
+     * @return The Profile if found.
+     *         Empty Optional if not.
+     */
     Optional<Profile> findById(Long profileId);
 }

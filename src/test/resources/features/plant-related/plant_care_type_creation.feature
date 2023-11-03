@@ -9,5 +9,5 @@ Feature: Create Descriptive Care Types for Plants
     And I should see the record created and success message
 
   Scenario: Error when trying to create a duplicated care type
-    When I attempt to create the care type with a "Trimming" description set the frequency to "4 weeks"
+    When I attempt to create the care type with a "Watering" description set the frequency to "4 weeks"
     Then the application should not save the care type

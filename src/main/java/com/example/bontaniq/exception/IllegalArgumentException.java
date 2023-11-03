@@ -1,4 +1,4 @@
-package com.example.bontaniq.exception.exception;
+package com.example.bontaniq.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

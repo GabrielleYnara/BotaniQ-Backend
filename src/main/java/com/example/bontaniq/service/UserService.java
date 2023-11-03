@@ -1,8 +1,7 @@
 package com.example.bontaniq.service;
 
-import com.example.bontaniq.controller.UserController;
-import com.example.bontaniq.exception.exception.InformationExistException;
-import com.example.bontaniq.exception.exception.InformationNotFoundException;
+import com.example.bontaniq.exception.InformationExistException;
+import com.example.bontaniq.exception.InformationNotFoundException;
 import com.example.bontaniq.model.Profile;
 import com.example.bontaniq.model.User;
 import com.example.bontaniq.model.request.LoginRequest;
@@ -20,23 +19,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
-import java.time.LocalDate;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 /**
  * Represents the User Service, responsible for housing business logic related to users.<br>
- *
- * This class serves as an intermediary between the controller and the repository,
- * invoking the repository to perform CRUD operations on users.
- * */
+ *<p>
+ *     This class serves as an intermediary between the controller and the repository,
+ *     invoking the repository to perform CRUD operations on users.
+ *</p>
+ */
 @Service
-public class UserService {
+public class UserService extends ServiceSharedResources{
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
-
-    private Logger logger = Logger.getLogger(UserController.class.getName());
-
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
@@ -151,14 +146,4 @@ public class UserService {
         }
     }
 
-    /**
-     * Extracts user information from context holder
-     * @return Current logged in User object
-     */
-    public User getCurrentLoggedInUser(){
-        logger.info("Retrieving the current logged in User");
-        MyUserDetails userDetails = (MyUserDetails) SecurityContextHolder //After jwt is generated, Security Context Holder is created to hold the user's state
-                .getContext().getAuthentication().getPrincipal(); // the entire User object, with authentication details
-        return userDetails.getUser();
-    }
 }

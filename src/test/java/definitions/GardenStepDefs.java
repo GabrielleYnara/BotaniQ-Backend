@@ -162,7 +162,6 @@ public class GardenStepDefs extends SetupTestDefs{
 
     @Then("I should see a list of plants associated with the garden")
     public void iShouldSeeAListOfPlantsAssociatedWithTheGarden() {
-        //ToDo: Update to print plant list once model is implemented
         JsonPath jsonPath = response.jsonPath();
         String message = jsonPath.get("message");
         Object garden = jsonPath.get("data");
