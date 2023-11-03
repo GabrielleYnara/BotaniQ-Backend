@@ -101,7 +101,7 @@ public class GardenController extends ControllerSharedResources {
         Optional<Garden> updatedGarden = gardenService.updateGarden(garden, gardenId);
         if (updatedGarden.isPresent()){
             requestResponse.put("message", "Garden successfully updated");
-            requestResponse.put("date", updatedGarden);
+            requestResponse.put("data", updatedGarden);
             return new ResponseEntity<>(requestResponse, HttpStatus.OK);
         } else {
             requestResponse.put("message", "Garden update failed!");
